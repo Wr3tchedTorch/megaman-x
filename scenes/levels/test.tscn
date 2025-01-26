@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://bldrt5xp3bnx3"]
+
+[ext_resource type="PackedScene" uid="uid://cvo1qtjxx8vyo" path="res://scenes/player/player.tscn" id="1_pvp52"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_apb7k"]
+size = Vector2(871, 186)
+
+[node name="Test" type="Node"]
+
+[node name="Player" parent="." instance=ExtResource("1_pvp52")]
+position = Vector2(-7, -257)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(421, 131)
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2(-3, 10)
+collision_layer = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(254.5, 386)
+shape = SubResource("RectangleShape2D_apb7k")

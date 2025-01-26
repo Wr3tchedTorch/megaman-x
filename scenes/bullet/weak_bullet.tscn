@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://b87v587vkc76p"]
+
+[ext_resource type="Script" path="res://scenes/bullet/WeakBullet.cs" id="1_7to2c"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_vbei6"]
+size = Vector2(16, 16)
+
+[node name="Weak Bullet" type="Area2D"]
+script = ExtResource("1_7to2c")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("PlaceholderTexture2D_vbei6")
+offset = Vector2(8, 0)

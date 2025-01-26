@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://cvo1qtjxx8vyo"]
+
+[ext_resource type="Script" path="res://scenes/player/Player.cs" id="1_3copa"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_fo8bc"]
+size = Vector2(32, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gblhe"]
+size = Vector2(33, 66)
+
+[node name="Player" type="CharacterBody2D"]
+collision_mask = 8
+script = ExtResource("1_3copa")
+height = 10000.0
+duration = 30.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.166658, 0.861717, 1, 1)
+texture = SubResource("PlaceholderTexture2D_fo8bc")
+offset = Vector2(0, -32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1.5, -29)
+shape = SubResource("RectangleShape2D_gblhe")
