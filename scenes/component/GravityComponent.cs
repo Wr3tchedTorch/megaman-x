@@ -4,20 +4,23 @@ using Godot;
 namespace Game.Component;
 
 public partial class GravityComponent : Node
-{    
+{    		
+	public bool IsJumping { get; private set; } = false;
+
     [ExportGroup("Jump")]	
     [Export] private float height = 10_000.0f;
     [Export] private float duration = 30f;	
 
 	private float Gravity   => 8 * height / (duration*duration);
-    private float JumpForce => Mathf.Sqrt(2 * height * Gravity);	
+    private float JumpForce => Mathf.Sqrt(2 * height * Gravity);
 
 	private float yVelocity = 0.0f;
 
 	private float jumpStopwatch = 0.0f;
-	private bool isJumping = false;
 
 	private CharacterBody2D parent;
+
+	[Signal] public delegate void OnFallingEventHandler();
 
 	public override void _Ready()
 	{
@@ -26,12 +29,12 @@ public partial class GravityComponent : Node
 
     public override void _PhysicsProcess(double delta)
     {			
-		if (isJumping) {
+		if (IsJumping) {
 			jumpStopwatch += TimeSpan.FromSeconds(delta).Milliseconds;
 
 			if (jumpStopwatch >= duration) 
 			{
-				isJumping = false;
+				IsJumping = false;
 				jumpStopwatch =  0;
 			}
 		}
@@ -40,8 +43,11 @@ public partial class GravityComponent : Node
 		parent.Velocity = toVelocity;
 
 		yVelocity += Gravity;
+		if (yVelocity > 0) {
+			EmitSignal(SignalName.OnFalling);
+		}
 
-		if (parent.IsOnFloor() && !isJumping)
+		if (parent.IsOnFloor() && !IsJumping)
 		{
 			yVelocity = 0;
 		}
@@ -50,7 +56,7 @@ public partial class GravityComponent : Node
 	public void Jump() 
 	{
 		yVelocity = -JumpForce;
-		isJumping = true;
+		IsJumping = true;
 	}
 
 	public float GetYvelocity() 

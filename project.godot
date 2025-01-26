@@ -53,3 +53,7 @@ reset_game={
 2d_physics/layer_2="bullet"
 2d_physics/layer_3="enemy"
 2d_physics/layer_4="ground"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
