@@ -1,6 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://cvo1qtjxx8vyo"]
+[gd_scene load_steps=6 format=3 uid="uid://cvo1qtjxx8vyo"]
 
 [ext_resource type="Script" path="res://scenes/player/Player.cs" id="1_3copa"]
+[ext_resource type="PackedScene" uid="uid://ciwigkcr5f3eb" path="res://scenes/component/VelocityComponent.tscn" id="2_nmjj5"]
+[ext_resource type="PackedScene" uid="uid://qxc0ovcmhfko" path="res://scenes/component/GravityComponent.tscn" id="3_1dspo"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_fo8bc"]
 size = Vector2(32, 64)
@@ -11,8 +13,10 @@ size = Vector2(33, 66)
 [node name="Player" type="CharacterBody2D"]
 collision_mask = 8
 script = ExtResource("1_3copa")
-height = 10000.0
-duration = 30.0
+
+[node name="VelocityComponent" parent="." instance=ExtResource("2_nmjj5")]
+
+[node name="GravityComponent" parent="." instance=ExtResource("3_1dspo")]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(0.166658, 0.861717, 1, 1)

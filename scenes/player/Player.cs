@@ -1,5 +1,4 @@
-// TODO: Break Velocity features into a Velocity component
-
+using Game.Component;
 using Godot;
 
 namespace Game.Player;
@@ -11,44 +10,23 @@ public partial class Player : CharacterBody2D
     private readonly StringName actionRight = "right";
     private readonly StringName actionShoot = "shoot";
 
-    [Export] private float speed  =  300.0f;
-    
-    [ExportGroup("Jump")]
-    [Export] private float height = 10_000.0f;
-    [Export] private float duration = 30f;
+    private GravityComponent  gravityComponent;
+    private VelocityComponent velocityComponent;
 
-    private float Gravity   => 8 * height / (duration*duration);
-    private float JumpForce => Mathf.Sqrt(2 * height * Gravity);
-
-    private Vector2 toVelocity;
-    
-    public override void _PhysicsProcess(double delta)
-    {        
-        if (IsOnFloor()) 
-        {
-            toVelocity.Y = 0;
-        }
-
-        HorizontalMovement();
-
-        toVelocity.Y += Gravity;
-        if (Input.IsActionJustPressed(actionJump)) 
-        {
-            Jump();
-        }
-        
-        Velocity = toVelocity;
-        MoveAndSlide();
-    }    
-
-    private void HorizontalMovement() 
+    public override void _Ready()
     {
-        float xDirection = Input.GetAxis(actionLeft, actionRight);
-        toVelocity.X = xDirection * speed;
-    }    
+        gravityComponent  = GetNode<GravityComponent>(nameof(GravityComponent));
+        velocityComponent = GetNode<VelocityComponent>(nameof(VelocityComponent));
+    }
 
-    private void Jump() 
-    {        
-        toVelocity.Y = -JumpForce;
+    public override void _PhysicsProcess(double delta)
+    {                
+        velocityComponent.MoveX(Input.GetAxis(actionLeft, actionRight));
+
+        bool canJump = Input.IsActionJustPressed(actionJump) && IsOnFloor();
+        if (canJump) 
+            gravityComponent.Jump();
+
+        MoveAndSlide();
     }
 }
