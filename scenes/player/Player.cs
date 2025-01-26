@@ -1,4 +1,5 @@
 // TODO: add last frame of fall animation (when the megaman x hits the ground)
+// TODO: refactor this ugly code please!
 
 using Game.Component;
 using Godot;
