@@ -1,3 +1,5 @@
+// TODO: Break Velocity features into a Velocity component
+
 using Godot;
 
 namespace Game.Player;
