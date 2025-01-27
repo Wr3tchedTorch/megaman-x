@@ -15,6 +15,12 @@ run/main_scene="res://scenes/level/test.tscn"
 config/features=PackedStringArray("4.3", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
+[display]
+
+window/size/viewport_width=768
+window/size/viewport_height=672
+window/vsync/vsync_mode=0
+
 [dotnet]
 
 project/assembly_name="Megaman X"
@@ -57,3 +63,5 @@ reset_game={
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
+2d/snap/snap_2d_transforms_to_pixel=true
+2d/snap/snap_2d_vertices_to_pixel=true

@@ -5,8 +5,9 @@ namespace Game.Component;
 
 public partial class GravityComponent : Node
 {    		
-	public bool IsJumping { get; private set; } = false;
-	public bool IsFalling { get; private set; } = false;
+	public bool IsJumping 	 { get; private set; } = false;
+	public bool IsFalling 	 { get; private set; } = false;
+	public bool ApplyGravity { get; set; } = true;
 
     [ExportGroup("Jump")]	
     [Export] private float height = 10_000.0f;
@@ -17,7 +18,7 @@ public partial class GravityComponent : Node
 
 	private float yVelocity = 0.0f;
 
-	private float jumpStopwatch = 0.0f;
+	private float jumpStopwatch = 0.0f;	
 
 	private CharacterBody2D parent;
 
@@ -40,8 +41,12 @@ public partial class GravityComponent : Node
 
 		Vector2 toVelocity = new(parent.Velocity.X, yVelocity);
 		parent.Velocity = toVelocity;
+		
+		if (ApplyGravity) 
+		{
+			yVelocity += Gravity;			
+		}
 
-		yVelocity += Gravity;
 		if (parent.IsOnFloor() && !IsJumping)
 		{
 			yVelocity = 0;
@@ -52,8 +57,9 @@ public partial class GravityComponent : Node
 
 	public void Jump() 
 	{
-		yVelocity = -JumpForce;
-		IsJumping = true;
+		yVelocity 	 = -JumpForce;
+		IsJumping 	 =  true;
+		ApplyGravity =  true;
 	}
 
 	public float GetYvelocity() 

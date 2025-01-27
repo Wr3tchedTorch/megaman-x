@@ -10,16 +10,17 @@ size = Vector2(871, 186)
 script = ExtResource("1_0ttev")
 
 [node name="Player" parent="." instance=ExtResource("1_pvp52")]
-position = Vector2(-35, 170)
+position = Vector2(607, 93)
 
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(84, 223)
-zoom = Vector2(3, 3)
+[node name="Camera2D" type="Camera2D" parent="Player"]
+position = Vector2(0, -20)
+zoom = Vector2(2.5, 2.5)
+position_smoothing_speed = 12.0
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 position = Vector2(-3, 10)
 collision_layer = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
-position = Vector2(254.5, 386)
+position = Vector2(244, 221)
 shape = SubResource("RectangleShape2D_apb7k")
