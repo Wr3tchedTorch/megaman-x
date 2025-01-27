@@ -6,6 +6,7 @@ namespace Game.Component;
 public partial class GravityComponent : Node
 {    		
 	public bool IsJumping { get; private set; } = false;
+	public bool IsFalling { get; private set; } = false;
 
     [ExportGroup("Jump")]	
     [Export] private float height = 10_000.0f;
@@ -19,8 +20,6 @@ public partial class GravityComponent : Node
 	private float jumpStopwatch = 0.0f;
 
 	private CharacterBody2D parent;
-
-	[Signal] public delegate void OnFallingEventHandler();
 
 	public override void _Ready()
 	{
@@ -43,14 +42,12 @@ public partial class GravityComponent : Node
 		parent.Velocity = toVelocity;
 
 		yVelocity += Gravity;
-		if (yVelocity > 0) {
-			EmitSignal(SignalName.OnFalling);
-		}
-
 		if (parent.IsOnFloor() && !IsJumping)
 		{
 			yVelocity = 0;
 		}
+
+		IsFalling = yVelocity > 0;
     }
 
 	public void Jump() 
