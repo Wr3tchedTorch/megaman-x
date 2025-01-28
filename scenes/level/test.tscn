@@ -14,7 +14,7 @@ position = Vector2(607, 93)
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 position = Vector2(0, -20)
-zoom = Vector2(2.5, 2.5)
+zoom = Vector2(3.2, 3.2)
 position_smoothing_speed = 12.0
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]

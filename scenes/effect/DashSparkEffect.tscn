@@ -1,0 +1,55 @@
+[gd_scene load_steps=9 format=3 uid="uid://b7r3knbou7k02"]
+
+[ext_resource type="Texture2D" uid="uid://b483e7kecqub2" path="res://assets/dash_spark.png" id="1_0s3hl"]
+[ext_resource type="Script" path="res://scenes/effect/Effect.cs" id="1_acbiq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rpuxe"]
+atlas = ExtResource("1_0s3hl")
+region = Rect2(0, 0, 27, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gb1m3"]
+atlas = ExtResource("1_0s3hl")
+region = Rect2(27, 0, 27, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oh3i6"]
+atlas = ExtResource("1_0s3hl")
+region = Rect2(54, 0, 27, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7v2o4"]
+atlas = ExtResource("1_0s3hl")
+region = Rect2(81, 0, 27, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jevdt"]
+atlas = ExtResource("1_0s3hl")
+region = Rect2(108, 0, 27, 26)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_hlh4c"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rpuxe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gb1m3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oh3i6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7v2o4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jevdt")
+}],
+"loop": false,
+"name": &"default",
+"speed": 15.0
+}]
+
+[node name="DashSparkEffect" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_hlh4c")
+frame = 4
+frame_progress = 1.0
+offset = Vector2(0, -13)
+flip_h = true
+script = ExtResource("1_acbiq")

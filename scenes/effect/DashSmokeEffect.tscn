@@ -1,0 +1,89 @@
+[gd_scene load_steps=14 format=3 uid="uid://cuqji1ofbth34"]
+
+[ext_resource type="Texture2D" uid="uid://giaofx5514um" path="res://assets/dash_smoke.png" id="1_br3ux"]
+[ext_resource type="Script" path="res://scenes/effect/Effect.cs" id="2_me8m2"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hpl5g"]
+atlas = ExtResource("1_br3ux")
+region = Rect2(0, 0, 14, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xrej7"]
+atlas = ExtResource("1_br3ux")
+region = Rect2(14, 0, 14, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kb02i"]
+atlas = ExtResource("1_br3ux")
+region = Rect2(28, 0, 14, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sm2ca"]
+atlas = ExtResource("1_br3ux")
+region = Rect2(42, 0, 14, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3eij4"]
+atlas = ExtResource("1_br3ux")
+region = Rect2(56, 0, 14, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7gp7n"]
+atlas = ExtResource("1_br3ux")
+region = Rect2(70, 0, 14, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2kahb"]
+atlas = ExtResource("1_br3ux")
+region = Rect2(84, 0, 14, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gyy1p"]
+atlas = ExtResource("1_br3ux")
+region = Rect2(98, 0, 14, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lk4xa"]
+atlas = ExtResource("1_br3ux")
+region = Rect2(112, 0, 14, 28)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v4nnm"]
+atlas = ExtResource("1_br3ux")
+region = Rect2(126, 0, 14, 28)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_d3ceu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hpl5g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xrej7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kb02i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sm2ca")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3eij4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7gp7n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2kahb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gyy1p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lk4xa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v4nnm")
+}],
+"loop": false,
+"name": &"default",
+"speed": 15.0
+}]
+
+[node name="DashSmokeEffect" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_d3ceu")
+frame = 9
+frame_progress = 1.0
+offset = Vector2(0, -14)
+script = ExtResource("2_me8m2")

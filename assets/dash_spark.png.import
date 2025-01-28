@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d2odkc8s0p5t0"
-path="res://.godot/imported/effects.png-a01e431a7fdb7e50ece87c7ba2ae9102.ctex"
+uid="uid://b483e7kecqub2"
+path="res://.godot/imported/dash_spark.png-a4221e7fae701096808d80c00e984c43.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/effects.png"
-dest_files=["res://.godot/imported/effects.png-a01e431a7fdb7e50ece87c7ba2ae9102.ctex"]
+source_file="res://assets/dash_spark.png"
+dest_files=["res://.godot/imported/dash_spark.png-a4221e7fae701096808d80c00e984c43.ctex"]
 
 [params]
 
