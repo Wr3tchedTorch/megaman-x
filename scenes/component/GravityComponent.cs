@@ -9,6 +9,8 @@ public partial class GravityComponent : Node
 	public bool IsFalling 	 { get; private set; } = false;
 	public bool ApplyGravity { get; set; } = true;
 
+	[Signal] public delegate void OnLandingEventHandler();
+
     [ExportGroup("Jump")]	
     [Export] private float height = 10_000.0f;
     [Export] private float duration = 30f;	
@@ -49,6 +51,10 @@ public partial class GravityComponent : Node
 
 		if (parent.IsOnFloor() && !IsJumping)
 		{
+			if (IsFalling) 
+			{
+				EmitSignal(SignalName.OnLanding);
+			}
 			yVelocity = 0;
 		}
 

@@ -26,7 +26,10 @@ public partial class Player : CharacterBody2D
         velocityComponent = GetNode<VelocityComponent>(nameof(VelocityComponent));
         animatedSprite2D  = GetNode<AnimatedSprite2D>(nameof(AnimatedSprite2D));
         
-        animatedSprite2D.AnimationChanged += () => { animatedSprite2D.Play(); };
+        gravityComponent.OnLanding += () => { currentState = PlayerState.Land; };
+        
+        animatedSprite2D.AnimationChanged  += () => { animatedSprite2D.Play(); };
+        animatedSprite2D.AnimationFinished += () => { if (currentState == PlayerState.Land) currentState = PlayerState.Idle; };
     }
 
     public override void _PhysicsProcess(double delta)
@@ -68,7 +71,7 @@ public partial class Player : CharacterBody2D
             return;
         }
 
-        if (!IsOnFloor()) 
+        if (!IsOnFloor() || currentState == PlayerState.Land) 
         {
             return;
         }

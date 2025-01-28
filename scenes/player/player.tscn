@@ -1,10 +1,18 @@
-[gd_scene load_steps=25 format=3 uid="uid://cvo1qtjxx8vyo"]
+[gd_scene load_steps=29 format=3 uid="uid://cvo1qtjxx8vyo"]
 
 [ext_resource type="Script" path="res://scenes/player/Player.cs" id="1_3copa"]
 [ext_resource type="PackedScene" uid="uid://ciwigkcr5f3eb" path="res://scenes/component/VelocityComponent.tscn" id="2_nmjj5"]
 [ext_resource type="PackedScene" uid="uid://qxc0ovcmhfko" path="res://scenes/component/GravityComponent.tscn" id="3_1dspo"]
 [ext_resource type="Texture2D" uid="uid://dvn7j078wvdf" path="res://assets/run.png" id="4_73d2k"]
-[ext_resource type="Texture2D" uid="uid://6ta6a0ga15nc" path="res://assets/sheet.png" id="4_db2p7"]
+[ext_resource type="Texture2D" uid="uid://6ta6a0ga15nc" path="res://assets/x_sheet.png" id="4_db2p7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v17mc"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(0, 245, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a5kr4"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(48, 245, 48, 49)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6tqo5"]
 atlas = ExtResource("4_db2p7")
@@ -37,6 +45,14 @@ region = Rect2(48, 49, 48, 49)
 [sub_resource type="AtlasTexture" id="AtlasTexture_igmpv"]
 atlas = ExtResource("4_db2p7")
 region = Rect2(96, 49, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0cvkm"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(0, 294, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sbucl"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(48, 294, 48, 49)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_10p78"]
 atlas = ExtResource("4_73d2k")
@@ -78,6 +94,17 @@ region = Rect2(432, 0, 48, 49)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_v17mc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a5kr4")
+}],
+"loop": false,
+"name": &"dash",
+"speed": 15.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_6tqo5")
 }, {
 "duration": 1.0,
@@ -113,6 +140,17 @@ animations = [{
 }],
 "loop": false,
 "name": &"jump",
+"speed": 15.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0cvkm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sbucl")
+}],
+"loop": false,
+"name": &"land",
 "speed": 15.0
 }, {
 "frames": [{
@@ -166,7 +204,8 @@ duration = 45.0
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -25)
 sprite_frames = SubResource("SpriteFrames_072hg")
-animation = &"fall"
+animation = &"run"
+frame_progress = 0.133247
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-0.5, -18.5)

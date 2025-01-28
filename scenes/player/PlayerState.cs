@@ -7,5 +7,7 @@ namespace Game.Player
        Jump,
        Fall,
        Shoot,
+       Dash,
+       Land
     }
 }
