@@ -2,6 +2,7 @@ namespace Game.Player
 {
     public enum PlayerState
     {
+       None,
        Idle,
        Run,
        Jump,

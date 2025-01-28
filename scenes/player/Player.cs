@@ -1,4 +1,4 @@
-// TODO: add land animation
+// TODO: fix dash response and make it closer to the actual game, analysys of original system is required.
 
 using Game.Component;
 using Godot;
@@ -7,16 +7,21 @@ namespace Game.Player;
 
 public partial class Player : CharacterBody2D
 {    
-    private const float coyoteDelay = .100f;
+    private const float COYOTE_DELAY = .100f;
+    
+    private const float DASH_DURATION    = 0.300f;
+    private const float DASH_SPEED_BOOST = 2f;
 
     private readonly StringName actionJump  = "jump";
     private readonly StringName actionLeft  = "left";
     private readonly StringName actionRight = "right";
     private readonly StringName actionShoot = "shoot";
+    private readonly StringName actionDash  = "dash";
 
     private GravityComponent  gravityComponent;
     private VelocityComponent velocityComponent;
     private AnimatedSprite2D  animatedSprite2D;
+    private AnimatedSprite2D  dashSparkEffect;
 
     private PlayerState currentState = PlayerState.Idle;    
 
@@ -25,11 +30,18 @@ public partial class Player : CharacterBody2D
         gravityComponent  = GetNode<GravityComponent>(nameof(GravityComponent));
         velocityComponent = GetNode<VelocityComponent>(nameof(VelocityComponent));
         animatedSprite2D  = GetNode<AnimatedSprite2D>(nameof(AnimatedSprite2D));
+        dashSparkEffect   = GetNode<AnimatedSprite2D>("DashSparkEffect");
         
-        gravityComponent.OnLanding += () => { currentState = PlayerState.Land; };
-        
+        gravityComponent.OnLanding       += () => { currentState = PlayerState.Land; };
+        velocityComponent.OnDashFinished += () => { currentState = PlayerState.None; };
+
         animatedSprite2D.AnimationChanged  += () => { animatedSprite2D.Play(); };
-        animatedSprite2D.AnimationFinished += () => { if (currentState == PlayerState.Land) currentState = PlayerState.Idle; };
+        animatedSprite2D.AnimationFinished += () => { 
+            switch (currentState)
+            {
+                case PlayerState.Land: currentState = PlayerState.Idle; break;
+            }
+        };
     }
 
     public override void _PhysicsProcess(double delta)
@@ -42,7 +54,7 @@ public partial class Player : CharacterBody2D
         if (!gravityComponent.IsJumping && IsOnFloor()) 
         {
             gravityComponent.ApplyGravity = false;
-        }
+        }        
 
         velocityComponent.MoveX(Input.GetAxis(actionLeft, actionRight));
 
@@ -52,9 +64,20 @@ public partial class Player : CharacterBody2D
         {
             gravityComponent.Jump();
         }
+        if (Input.IsActionJustPressed(actionDash) && IsOnFloor()) 
+        {
+            velocityComponent.SetSpeed(velocityComponent.Speed*DASH_SPEED_BOOST, DASH_DURATION);
+            currentState = PlayerState.Dash;
+            
+            dashSparkEffect.Scale = new Vector2(animatedSprite2D.FlipH ? -1 : 1, dashSparkEffect.Scale.Y);
+            dashSparkEffect.Play();
+        }
 
         UpdateState();
-        animatedSprite2D.Animation = currentState.ToString().ToLower();
+        if (currentState != PlayerState.None) 
+        {
+            animatedSprite2D.Animation = currentState.ToString().ToLower();
+        }
         MoveAndSlide();
     }
 
@@ -71,7 +94,7 @@ public partial class Player : CharacterBody2D
             return;
         }
 
-        if (!IsOnFloor() || currentState == PlayerState.Land) 
+        if (!IsOnFloor() || currentState == PlayerState.Land || currentState == PlayerState.Dash) 
         {
             return;
         }
@@ -87,7 +110,7 @@ public partial class Player : CharacterBody2D
 
     private async void StartCoyoteTimer() 
     {        
-        await ToSignal(GetTree().CreateTimer(coyoteDelay), "timeout");
+        await ToSignal(GetTree().CreateTimer(COYOTE_DELAY), "timeout");
         gravityComponent.ApplyGravity = true;
     }
 }

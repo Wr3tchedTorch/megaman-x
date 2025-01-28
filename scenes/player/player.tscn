@@ -1,10 +1,11 @@
-[gd_scene load_steps=29 format=3 uid="uid://cvo1qtjxx8vyo"]
+[gd_scene load_steps=36 format=3 uid="uid://cvo1qtjxx8vyo"]
 
 [ext_resource type="Script" path="res://scenes/player/Player.cs" id="1_3copa"]
 [ext_resource type="PackedScene" uid="uid://ciwigkcr5f3eb" path="res://scenes/component/VelocityComponent.tscn" id="2_nmjj5"]
 [ext_resource type="PackedScene" uid="uid://qxc0ovcmhfko" path="res://scenes/component/GravityComponent.tscn" id="3_1dspo"]
 [ext_resource type="Texture2D" uid="uid://dvn7j078wvdf" path="res://assets/run.png" id="4_73d2k"]
 [ext_resource type="Texture2D" uid="uid://6ta6a0ga15nc" path="res://assets/x_sheet.png" id="4_db2p7"]
+[ext_resource type="Texture2D" uid="uid://d2odkc8s0p5t0" path="res://assets/effects.png" id="6_rmnvr"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v17mc"]
 atlas = ExtResource("4_db2p7")
@@ -186,6 +187,52 @@ animations = [{
 "speed": 15.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_w6abe"]
+atlas = ExtResource("6_rmnvr")
+region = Rect2(0, 0, 27, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cvdyp"]
+atlas = ExtResource("6_rmnvr")
+region = Rect2(27, 0, 27, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_brac6"]
+atlas = ExtResource("6_rmnvr")
+region = Rect2(54, 0, 27, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_epej7"]
+atlas = ExtResource("6_rmnvr")
+region = Rect2(81, 0, 27, 26)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dxama"]
+atlas = ExtResource("6_rmnvr")
+region = Rect2(108, 0, 27, 26)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_hlh4c"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w6abe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cvdyp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_brac6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_epej7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dxama")
+}, {
+"duration": 1.0,
+"texture": null
+}],
+"loop": false,
+"name": &"default",
+"speed": 15.0
+}]
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_7modw"]
 radius = 8.5
 height = 33.0
@@ -195,7 +242,6 @@ collision_mask = 8
 script = ExtResource("1_3copa")
 
 [node name="VelocityComponent" parent="." instance=ExtResource("2_nmjj5")]
-speed = 125.0
 
 [node name="GravityComponent" parent="." instance=ExtResource("3_1dspo")]
 height = 4200.0
@@ -204,8 +250,17 @@ duration = 45.0
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -25)
 sprite_frames = SubResource("SpriteFrames_072hg")
-animation = &"run"
-frame_progress = 0.133247
+animation = &"dash"
+frame = 1
+frame_progress = 1.0
+
+[node name="DashSparkEffect" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -13)
+sprite_frames = SubResource("SpriteFrames_hlh4c")
+frame = 5
+frame_progress = 1.0
+offset = Vector2(-29, 0)
+flip_h = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-0.5, -18.5)
