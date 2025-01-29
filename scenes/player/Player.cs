@@ -1,5 +1,6 @@
-// TODO: adjust dash parameters (speed, duration)
+// TODO: adjust dash parameters (movement speed, dash speed boost, dash duration)
 // TODO: refactor player code
+// TODO: if the player jumps during a dash, reset dash speed boost only on landing
 
 using Game.Component;
 using Game.Scripts;
