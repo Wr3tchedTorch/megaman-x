@@ -199,6 +199,7 @@ dashSparkEffectScene = ExtResource("6_y2e2i")
 dashSmokeEffectScene = ExtResource("3_oswhr")
 
 [node name="VelocityComponent" parent="." instance=ExtResource("2_nmjj5")]
+Speed = 200.0
 
 [node name="GravityComponent" parent="." instance=ExtResource("3_1dspo")]
 height = 4200.0

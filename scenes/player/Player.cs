@@ -13,11 +13,11 @@ public partial class Player : CharacterBody2D
     private const float DASH_SMOKE_SPAWN_DELAY = .06f;
     
     private const float MAX_DASH_DURATION = 0.400f;
-    private const float DASH_SPEED_BOOST = 1.20f;
+    private const float DASH_SPEED_BOOST = 1.50f;
 
-    private readonly StringName actionJump  = "jump";
+    private readonly StringName actionJump  = "jump";   
     private readonly StringName actionLeft  = "left";
-    private readonly StringName actionRight = "righgit addt";
+    private readonly StringName actionRight = "right";
     private readonly StringName actionShoot = "shoot";
     private readonly StringName actionDash  = "dash";
 
