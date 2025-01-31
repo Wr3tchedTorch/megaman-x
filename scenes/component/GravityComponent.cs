@@ -14,32 +14,34 @@ public partial class GravityComponent : Node
     [ExportGroup("Jump")]	
     [Export] private float height = 10_000.0f;
     [Export] private float duration = 30f;	
+	[Export] private Timer jumpGravityDelayTimer;
 
 	private float Gravity   => 8 * height / (duration*duration);
     private float JumpForce => Mathf.Sqrt(2 * height * Gravity);
 
 	private float yVelocity = 0.0f;
 
-	private float jumpStopwatch = 0.0f;	
-
-	private CharacterBody2D parent;
+	private CharacterBody2D parent;	
 
 	public override void _Ready()
 	{
 		parent = GetParent<CharacterBody2D>();
+
+		jumpGravityDelayTimer.WaitTime = duration/60;
+		jumpGravityDelayTimer.Timeout += () => { IsJumping = false; };
 	}
 
     public override void _PhysicsProcess(double delta)
     {			
-		if (IsJumping) {
-			jumpStopwatch += TimeSpan.FromSeconds(delta).Milliseconds;
-
-			if (jumpStopwatch >= duration) 
-			{
-				IsJumping = false;
-				jumpStopwatch =  0;
-			}
+		if (IsJumping && jumpGravityDelayTimer.IsStopped()) 
+		{	
+			jumpGravityDelayTimer.Start();
 		}
+
+		if (!IsJumping && parent.IsOnFloor()) 
+        {
+            ApplyGravity = false;
+        }        
 
 		Vector2 toVelocity = new(parent.Velocity.X, yVelocity);
 		parent.Velocity = toVelocity;
@@ -51,13 +53,12 @@ public partial class GravityComponent : Node
 
 		if (parent.IsOnFloor() && !IsJumping)
 		{
-			if (IsFalling) 
+			if (IsFalling)
 			{
 				EmitSignal(SignalName.OnLanding);
 			}
 			yVelocity = 0;
 		}
-
 		IsFalling = yVelocity > 0;
     }
 

@@ -201,20 +201,30 @@ dashSmokeEffectScene = ExtResource("3_oswhr")
 [node name="VelocityComponent" parent="." instance=ExtResource("2_nmjj5")]
 Speed = 200.0
 
-[node name="GravityComponent" parent="." instance=ExtResource("3_1dspo")]
-height = 4200.0
-duration = 45.0
+[node name="GravityComponent" parent="." node_paths=PackedStringArray("jumpGravityDelayTimer") instance=ExtResource("3_1dspo")]
+height = 3800.0
+duration = 51.0
+jumpGravityDelayTimer = NodePath("Timer")
+
+[node name="Timer" type="Timer" parent="GravityComponent"]
+one_shot = true
 
 [node name="DashCooldownTimer" type="Timer" parent="."]
 wait_time = 0.35
 one_shot = true
 
+[node name="DashDurationTimer" type="Timer" parent="."]
+wait_time = 0.4
+one_shot = true
+
+[node name="CoyoteDurationTimer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -25)
 sprite_frames = SubResource("SpriteFrames_072hg")
-animation = &"dash"
-frame = 1
-frame_progress = 1.0
+animation = &"idle"
 
 [node name="DashSparkEffectMarker" type="Marker2D" parent="."]
 position = Vector2(-25, 0)

@@ -1,6 +1,5 @@
 // TODO: adjust dash parameters (movement speed, dash speed boost, dash duration)
-// TODO: refactor player code
-// TODO: if the player jumps during a dash, reset dash speed boost only on landing
+// TODO: (optional) make velocity on the x axis affect gravity
 
 using Game.Component;
 using Game.Scripts;
@@ -9,152 +8,125 @@ using Godot;
 namespace Game.Player;
 
 public partial class Player : CharacterBody2D
-{        
-    private const float COYOTE_DELAY = .100f;
+{
     private const float DASH_SMOKE_SPAWN_DELAY = .06f;
-    
-    private const float MAX_DASH_DURATION = 0.400f;
+
     private const float DASH_SPEED_BOOST = 1.50f;
 
-    private readonly StringName actionJump  = "jump";   
-    private readonly StringName actionLeft  = "left";
+    private readonly StringName actionJump = "jump";
+    private readonly StringName actionLeft = "left";
     private readonly StringName actionRight = "right";
     private readonly StringName actionShoot = "shoot";
-    private readonly StringName actionDash  = "dash";
+    private readonly StringName actionDash = "dash";
 
     [Export] private PackedScene dashSparkEffectScene;
     [Export] private PackedScene dashSmokeEffectScene;
 
     private Marker2D dashSparkEffectMarker;
     private Marker2D dashSmokeEffectMarker;
-    private GravityComponent  gravityComponent;
+    private GravityComponent gravityComponent;
     private VelocityComponent velocityComponent;
-    private AnimatedSprite2D  animatedSprite2D;
-    private Timer dashCooldownTimer;    
+    private AnimatedSprite2D animatedSprite2D;
+    private Timer dashCooldownTimer;
+    private Timer dashDurationTimer;
+    private Timer coyoteDurationTimer;
 
-    private PlayerState currentState = PlayerState.Idle;    
+    private PlayerState currentState = PlayerState.Idle;
 
     private float dashingDirection = 0;
-    private bool isDashing = false;    
-    private bool canDash   = true;
+    private bool isDashing = false;
+    private bool canDash = true;
     private bool canSpawnSmoke = true;
 
     public override void _Ready()
     {
-        gravityComponent  = GetNode<GravityComponent>(nameof(GravityComponent));
+        gravityComponent = GetNode<GravityComponent>(nameof(GravityComponent));
         velocityComponent = GetNode<VelocityComponent>(nameof(VelocityComponent));
-        animatedSprite2D  = GetNode<AnimatedSprite2D>(nameof(AnimatedSprite2D));
-        dashSparkEffectMarker  = GetNode<Marker2D>("DashSparkEffectMarker");
-        dashSmokeEffectMarker  = GetNode<Marker2D>("DashSmokeEffectMarker");
-
+        animatedSprite2D = GetNode<AnimatedSprite2D>(nameof(AnimatedSprite2D));
+        dashSparkEffectMarker = GetNode<Marker2D>("DashSparkEffectMarker");
+        dashSmokeEffectMarker = GetNode<Marker2D>("DashSmokeEffectMarker");
         dashCooldownTimer = GetNode<Timer>("DashCooldownTimer");
+        dashDurationTimer = GetNode<Timer>("DashDurationTimer");
+        coyoteDurationTimer = GetNode<Timer>("CoyoteDurationTimer");
+
         dashCooldownTimer.Timeout += () => { canDash = true; };
-        
+        dashDurationTimer.Timeout += () => { FinishDash(); };
+        coyoteDurationTimer.Timeout += () => { GD.Print("applying gravity"); gravityComponent.ApplyGravity = true; };
+
         gravityComponent.OnLanding += () => { currentState = PlayerState.Land; };
 
-        animatedSprite2D.AnimationChanged  += () => { animatedSprite2D.Play(); };
-        animatedSprite2D.AnimationFinished += () => { 
-            switch (currentState)
-            {
-                case PlayerState.Land: currentState = PlayerState.Idle; break;
-            }
+        animatedSprite2D.AnimationChanged += () => { animatedSprite2D.Play(); };
+        animatedSprite2D.AnimationFinished += () =>
+        {
+            if (currentState == PlayerState.Land) currentState = PlayerState.Idle;
         };
     }
 
     public override void _PhysicsProcess(double delta)
     {
-        if (!gravityComponent.ApplyGravity && !IsOnFloor()) 
-        {
-            StartCoyoteTimer();
-        }
+        var isStanding = !gravityComponent.ApplyGravity;
 
-        if (!gravityComponent.IsJumping && IsOnFloor()) 
-        {
-            gravityComponent.ApplyGravity = false;
-        }        
-
-        var axis = Input.GetAxis(actionLeft, actionRight);
-        velocityComponent.MoveX(axis);
-        if (isDashing && axis != 0 && axis != dashingDirection) 
-        {
-            FinishDashing();
-        }
+        var xDirection = Input.GetAxis(actionLeft, actionRight);
+        velocityComponent.MoveX(xDirection);
 
         if (isDashing) 
         {
-            if (canSpawnSmoke) 
-            {
-                AnimatedSprite2D dashSmokeEffect = dashSmokeEffectScene.Instantiate<AnimatedSprite2D>();
-                dashSmokeEffect.GlobalPosition = dashSmokeEffectMarker.GlobalPosition;
-                dashSmokeEffect.FlipH = !animatedSprite2D.FlipH;
-                GetOwner().AddChild(dashSmokeEffect);
+            Dash(xDirection);            
+        }
+        else if (IsOnFloor())
+        {
+            velocityComponent.ResetSpeed();
+        }
 
-                canSpawnSmoke = false;
-                StartSmokeDelayTimer();
+        if (isStanding)
+        {
+            if (coyoteDurationTimer.IsStopped() && !IsOnFloor())
+            {
+                coyoteDurationTimer.Start();
             }
 
-            velocityComponent.MoveX(dashingDirection);
+            if (Input.IsActionJustPressed(actionJump))
+            {
+                gravityComponent.Jump();
+            }
+
+            if (Input.IsActionJustPressed(actionDash) && !isDashing && canDash)
+            {
+                StartDash();
+            }
         }
 
-        if (Velocity.X != 0) animatedSprite2D.FlipH = Velocity.X < 0;
-
-        if (Input.IsActionJustPressed(actionJump) && !gravityComponent.ApplyGravity) 
+        if (Velocity.X != 0)
         {
-            gravityComponent.Jump();
-        }
-        if (Input.IsActionJustPressed(actionDash) && IsOnFloor() && !isDashing && canDash) 
-        {
-            velocityComponent.Speed *= DASH_SPEED_BOOST;
-            dashingDirection = animatedSprite2D.FlipH ? -1 : 1;
-                                
-            dashSparkEffectMarker.FlipH(animatedSprite2D.FlipH);
-            dashSmokeEffectMarker.FlipH(animatedSprite2D.FlipH);
-
-            AnimatedSprite2D dashSparkEffect = dashSparkEffectScene.Instantiate<AnimatedSprite2D>();
-            dashSparkEffect.GlobalPosition = dashSparkEffectMarker.GlobalPosition;
-            dashSparkEffect.FlipH = !animatedSprite2D.FlipH;
-
-            GetOwner().AddChild(dashSparkEffect);
-
-            currentState = PlayerState.Dash;
-            isDashing = true;
-            canDash = false;
-            dashCooldownTimer.Start();
-
-            StartDashDurationTimer();
-        }
-        
-        if (!Input.IsActionPressed(actionDash)) 
-        {
-            FinishDashing();
+            animatedSprite2D.FlipH = Velocity.X < 0;
         }
 
         UpdateState();
-        if (currentState != PlayerState.None) 
+        if (currentState != PlayerState.None)
         {
             animatedSprite2D.Animation = currentState.ToString().ToLower();
         }
         MoveAndSlide();
     }
 
-    private void UpdateState() 
+    private void UpdateState()
     {
         if (gravityComponent.IsJumping)
         {
             currentState = PlayerState.Jump;
             return;
         }
-        if (gravityComponent.IsFalling) 
+        if (gravityComponent.IsFalling)
         {
             currentState = PlayerState.Fall;
             return;
         }
 
-        if (!IsOnFloor() || currentState == PlayerState.Land || currentState == PlayerState.Dash) 
+        if (!IsOnFloor() || currentState == PlayerState.Land || currentState == PlayerState.Dash)
         {
             return;
         }
-        
+
         if (Velocity.X != 0)
         {
             currentState = PlayerState.Run;
@@ -164,28 +136,61 @@ public partial class Player : CharacterBody2D
         currentState = PlayerState.Idle;
     }
 
-    private async void StartCoyoteTimer() 
-    {        
-        await ToSignal(GetTree().CreateTimer(COYOTE_DELAY), "timeout");
-        gravityComponent.ApplyGravity = true;
-    }
-
-    private async void StartDashDurationTimer() 
+    private void SpawnParticle(Vector2 position, PackedScene packedScene)
     {
-        await ToSignal(GetTree().CreateTimer(MAX_DASH_DURATION), "timeout");
-        FinishDashing();
+        AnimatedSprite2D particle = packedScene.Instantiate<AnimatedSprite2D>();
+        particle.GlobalPosition = position;
+        particle.FlipH = !animatedSprite2D.FlipH;
+
+        GetOwner().AddChild(particle);
     }
 
-    private async void StartSmokeDelayTimer() 
+    private void Dash(float xDirection)
+    {
+        if (!Input.IsActionPressed(actionDash) || (xDirection != 0 && xDirection != dashingDirection))
+        {
+            FinishDash();
+            return;
+        }
+
+        if (canSpawnSmoke)
+        {
+            SpawnParticle(dashSmokeEffectMarker.GlobalPosition, dashSmokeEffectScene);
+
+            canSpawnSmoke = false;
+            StartSmokeDelayTimer();
+        }
+
+        velocityComponent.MoveX(dashingDirection);
+    }
+
+    private void StartDash()
+    {
+        velocityComponent.Speed *= DASH_SPEED_BOOST;
+        dashingDirection = animatedSprite2D.FlipH ? -1 : 1;
+
+        dashSparkEffectMarker.FlipH(animatedSprite2D.FlipH);
+        dashSmokeEffectMarker.FlipH(animatedSprite2D.FlipH);
+
+        SpawnParticle(dashSparkEffectMarker.GlobalPosition, dashSparkEffectScene);
+
+        currentState = PlayerState.Dash;
+        canDash = false;
+        isDashing = true;
+
+        dashCooldownTimer.Start();
+        dashDurationTimer.Start();
+    }
+
+    private void FinishDash()
+    {
+        currentState = PlayerState.None;
+        isDashing = false;        
+    }
+
+    private async void StartSmokeDelayTimer()
     {
         await ToSignal(GetTree().CreateTimer(DASH_SMOKE_SPAWN_DELAY), "timeout");
         canSpawnSmoke = true;
-    }
-
-    private void FinishDashing() 
-    {
-        currentState = PlayerState.None;
-        velocityComponent.ResetSpeed();
-        isDashing = false;
     }
 }
