@@ -1,6 +1,8 @@
 // TODO: adjust dash parameters (movement speed, dash speed boost, dash duration)
-// TODO: (optional) make velocity on the x axis affect gravity
+// TODO: (maybe) make velocity on the x axis affect gravity
+// TODO: (maybe) extract all dash logic related code from Player.cs into VelocityComponent.cs
 
+using System.Linq;
 using Game.Component;
 using Game.Scripts;
 using Godot;
@@ -37,7 +39,8 @@ public partial class Player : CharacterBody2D
     private bool isDashing = false;
     private bool canDash = true;
     private bool canSpawnSmoke = true;
-
+    private bool isAiming = false;
+    
     public override void _Ready()
     {
         gravityComponent = GetNode<GravityComponent>(nameof(GravityComponent));
@@ -64,6 +67,7 @@ public partial class Player : CharacterBody2D
 
     public override void _PhysicsProcess(double delta)
     {
+        string animationName = "";
         var isStanding = !gravityComponent.ApplyGravity;
 
         var xDirection = Input.GetAxis(actionLeft, actionRight);
@@ -96,17 +100,39 @@ public partial class Player : CharacterBody2D
             }
         }
 
+        if (Input.IsActionJustPressed(actionShoot))
+        {            
+            Shoot();
+        }
+
+        if (isAiming) 
+        {
+            animationName = $"{PlayerState.Shoot.ToString().ToLower()}_";
+        }
+
+        if (currentState != PlayerState.None)
+        {
+            animationName += currentState.ToString().ToLower();
+        }
+
         if (Velocity.X != 0)
         {
             animatedSprite2D.FlipH = Velocity.X < 0;
         }
 
+        animatedSprite2D.Animation = animationName;
         UpdateState();
-        if (currentState != PlayerState.None)
-        {
-            animatedSprite2D.Animation = currentState.ToString().ToLower();
-        }
         MoveAndSlide();
+    }
+    
+    private async void Shoot() 
+    {
+
+        if (isAiming) return;
+
+        isAiming = true;
+        await ToSignal(GetTree().CreateTimer(.25f), "timeout");
+        isAiming = false;
     }
 
     private void UpdateState()

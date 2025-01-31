@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://cvo1qtjxx8vyo"]
+[gd_scene load_steps=42 format=3 uid="uid://cvo1qtjxx8vyo"]
 
 [ext_resource type="Script" path="res://scenes/player/Player.cs" id="1_3copa"]
 [ext_resource type="PackedScene" uid="uid://ciwigkcr5f3eb" path="res://scenes/component/VelocityComponent.tscn" id="2_nmjj5"]
@@ -91,6 +91,50 @@ region = Rect2(384, 0, 48, 49)
 [sub_resource type="AtlasTexture" id="AtlasTexture_iwj5q"]
 atlas = ExtResource("4_73d2k")
 region = Rect2(432, 0, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_byx7j"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(0, 343, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sm2ex"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(0, 392, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w7tfh"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(48, 392, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qqj7l"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(96, 392, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_in6xe"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(144, 392, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jdksv"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(192, 392, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dtdib"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(240, 392, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xtwk0"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(288, 392, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y3ym7"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(336, 392, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kw2e7"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(384, 392, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3brlm"]
+atlas = ExtResource("4_db2p7")
+region = Rect2(432, 392, 48, 49)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_072hg"]
 animations = [{
@@ -186,6 +230,49 @@ animations = [{
 "loop": true,
 "name": &"run",
 "speed": 15.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_byx7j")
+}],
+"loop": true,
+"name": &"shoot_idle",
+"speed": 15.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sm2ex")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w7tfh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qqj7l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_in6xe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jdksv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dtdib")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xtwk0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y3ym7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kw2e7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3brlm")
+}],
+"loop": true,
+"name": &"shoot_run",
+"speed": 15.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_7modw"]
@@ -224,7 +311,7 @@ one_shot = true
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -25)
 sprite_frames = SubResource("SpriteFrames_072hg")
-animation = &"idle"
+animation = &"shoot_idle"
 
 [node name="DashSparkEffectMarker" type="Marker2D" parent="."]
 position = Vector2(-25, 0)
