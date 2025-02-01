@@ -2,7 +2,6 @@
 // TODO: (maybe) make velocity on the x axis affect gravity
 // TODO: (maybe) extract all dash logic related code from Player.cs into VelocityComponent.cs
 
-using System.Linq;
 using Game.Component;
 using Game.Scripts;
 using Godot;
@@ -14,6 +13,7 @@ public partial class Player : CharacterBody2D
     private const float DASH_SMOKE_SPAWN_DELAY = .06f;
 
     private const float DASH_SPEED_BOOST = 1.50f;
+    private const float AIMING_ANIMATION_DELAY = 0.35f;
 
     private readonly StringName actionJump = "jump";
     private readonly StringName actionLeft = "left";
@@ -32,6 +32,7 @@ public partial class Player : CharacterBody2D
     private Timer dashCooldownTimer;
     private Timer dashDurationTimer;
     private Timer coyoteDurationTimer;
+    private Timer aimingDelayTimer;
 
     private PlayerState currentState = PlayerState.Idle;
 
@@ -52,8 +53,19 @@ public partial class Player : CharacterBody2D
         dashDurationTimer = GetNode<Timer>("DashDurationTimer");
         coyoteDurationTimer = GetNode<Timer>("CoyoteDurationTimer");
 
-        dashCooldownTimer.Timeout += () => { canDash = true; };
-        dashDurationTimer.Timeout += () => { FinishDash(); };
+        aimingDelayTimer = new()
+        {
+            WaitTime  = AIMING_ANIMATION_DELAY,
+            OneShot   = true,
+            Autostart = false
+        };
+        AddChild(aimingDelayTimer);
+        string aimingDelayTimerName = nameof(aimingDelayTimer).ToString();
+        aimingDelayTimer.Name = $"{char.ToUpper(aimingDelayTimerName[0])}{aimingDelayTimerName[1..]}";
+
+        aimingDelayTimer.Timeout    += () => { isAiming = false; };
+        dashCooldownTimer.Timeout   += () => { canDash = true; };
+        dashDurationTimer.Timeout   += () => { FinishDash(); };
         coyoteDurationTimer.Timeout += () => { GD.Print("applying gravity"); gravityComponent.ApplyGravity = true; };
 
         gravityComponent.OnLanding += () => { currentState = PlayerState.Land; };
@@ -102,6 +114,7 @@ public partial class Player : CharacterBody2D
 
         if (Input.IsActionJustPressed(actionShoot))
         {            
+            aimingDelayTimer.Stop();
             Shoot();
         }
 
@@ -109,30 +122,26 @@ public partial class Player : CharacterBody2D
         {
             animationName = $"{PlayerState.Shoot.ToString().ToLower()}_";
         }
-
-        if (currentState != PlayerState.None)
-        {
-            animationName += currentState.ToString().ToLower();
-        }
+        
+        animationName += currentState.ToString().ToLower();
 
         if (Velocity.X != 0)
         {
             animatedSprite2D.FlipH = Velocity.X < 0;
         }
 
-        animatedSprite2D.Animation = animationName;
+        if (currentState != PlayerState.None) 
+        {
+            animatedSprite2D.Animation = animationName;
+        }
         UpdateState();
         MoveAndSlide();
     }
     
-    private async void Shoot() 
+    private void Shoot() 
     {
-
-        if (isAiming) return;
-
         isAiming = true;
-        await ToSignal(GetTree().CreateTimer(.25f), "timeout");
-        isAiming = false;
+        aimingDelayTimer.Start();
     }
 
     private void UpdateState()
