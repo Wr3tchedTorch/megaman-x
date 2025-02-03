@@ -36,6 +36,11 @@ public partial class VelocityComponent : Node
 		toVelocity = dir * Speed;
 		parent.Velocity = toVelocity;
 	}
+	
+	public Vector2 GetVelocity() 
+	{
+		return toVelocity;
+	}
 
 	// public async void SetSpeed(float toSpeed, float howLong)
 	// {

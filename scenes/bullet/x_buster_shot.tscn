@@ -1,0 +1,69 @@
+[gd_scene load_steps=11 format=3 uid="uid://cnvb2nrib0unw"]
+
+[ext_resource type="Script" path="res://scenes/bullet/BusterShot.cs" id="1_jwlys"]
+[ext_resource type="PackedScene" uid="uid://ciwigkcr5f3eb" path="res://scenes/component/VelocityComponent.tscn" id="2_estsh"]
+[ext_resource type="Texture2D" uid="uid://dpj5emxbkidcj" path="res://assets/x_buster_shot.png" id="3_ntkmt"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fapsw"]
+atlas = ExtResource("3_ntkmt")
+region = Rect2(0, 0, 15, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oyr7o"]
+atlas = ExtResource("3_ntkmt")
+region = Rect2(0, 0, 15, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yk5jx"]
+atlas = ExtResource("3_ntkmt")
+region = Rect2(15, 0, 15, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xca3w"]
+atlas = ExtResource("3_ntkmt")
+region = Rect2(30, 0, 15, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hbsbj"]
+atlas = ExtResource("3_ntkmt")
+region = Rect2(45, 0, 15, 15)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ltcwk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fapsw")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oyr7o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yk5jx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xca3w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hbsbj")
+}],
+"loop": false,
+"name": &"hit",
+"speed": 15.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_lwvjl"]
+radius = 5.0
+
+[node name="XBusterShot" type="Area2D" node_paths=PackedStringArray("velocityComponent", "animatedSprite2D")]
+script = ExtResource("1_jwlys")
+velocityComponent = NodePath("VelocityComponent")
+animatedSprite2D = NodePath("AnimatedSprite2D")
+
+[node name="VelocityComponent" parent="." instance=ExtResource("2_estsh")]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_ltcwk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_lwvjl")
