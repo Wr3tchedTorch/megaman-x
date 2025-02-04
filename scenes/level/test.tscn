@@ -80,3 +80,7 @@ position = Vector2(761, 160)
 position = Vector2(0, -20)
 zoom = Vector2(3.2, 3.2)
 position_smoothing_speed = 12.0
+
+[node name="Shots" type="Node" parent="." groups=["shots"]]
+
+[node name="Particles" type="Node" parent="." groups=["Particles"]]

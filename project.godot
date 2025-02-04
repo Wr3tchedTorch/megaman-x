@@ -25,6 +25,11 @@ window/vsync/vsync_mode=0
 
 project/assembly_name="Megaman X"
 
+[global_group]
+
+shots="Stores all shots in the screen"
+Particles="Stores all global particles in the game"
+
 [input]
 
 left={

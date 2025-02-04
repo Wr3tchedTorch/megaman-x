@@ -1,7 +1,12 @@
+// TODO: add shooting
+// TODO: add charging lv 1 and 2
+// TODO: add wall slide
+
 // TODO: adjust dash parameters (movement speed, dash speed boost, dash duration)
 // TODO: (maybe) make velocity on the x axis affect gravity
 // TODO: (maybe) extract all dash logic related code from Player.cs into VelocityComponent.cs
 
+using Game.Bullet;
 using Game.Component;
 using Game.Scripts;
 using Godot;
@@ -23,12 +28,18 @@ public partial class Player : CharacterBody2D
 
     [Export] private PackedScene dashSparkEffectScene;
     [Export] private PackedScene dashSmokeEffectScene;
+    
+    [ExportGroup("Shots")]
+    [Export] private PackedScene busterShotScene;
 
     private Marker2D dashSparkEffectMarker;
     private Marker2D dashSmokeEffectMarker;
+    private Marker2D busterShotMarker;
+
     private GravityComponent gravityComponent;
     private VelocityComponent velocityComponent;
     private AnimatedSprite2D animatedSprite2D;
+
     private Timer dashCooldownTimer;
     private Timer dashDurationTimer;
     private Timer coyoteDurationTimer;
@@ -47,8 +58,11 @@ public partial class Player : CharacterBody2D
         gravityComponent = GetNode<GravityComponent>(nameof(GravityComponent));
         velocityComponent = GetNode<VelocityComponent>(nameof(VelocityComponent));
         animatedSprite2D = GetNode<AnimatedSprite2D>(nameof(AnimatedSprite2D));
+
         dashSparkEffectMarker = GetNode<Marker2D>("DashSparkEffectMarker");
         dashSmokeEffectMarker = GetNode<Marker2D>("DashSmokeEffectMarker");
+        busterShotMarker = GetNode<Marker2D>("BusterShotMarker");
+
         dashCooldownTimer = GetNode<Timer>("DashCooldownTimer");
         dashDurationTimer = GetNode<Timer>("DashDurationTimer");
         coyoteDurationTimer = GetNode<Timer>("CoyoteDurationTimer");
@@ -83,7 +97,7 @@ public partial class Player : CharacterBody2D
         var isStanding = !gravityComponent.ApplyGravity;
 
         var xDirection = Input.GetAxis(actionLeft, actionRight);
-        velocityComponent.MoveX(xDirection);
+        Velocity = new Vector2(velocityComponent.MoveX(xDirection), Velocity.Y);
 
         if (isDashing) 
         {
@@ -115,7 +129,7 @@ public partial class Player : CharacterBody2D
         if (Input.IsActionJustPressed(actionShoot))
         {            
             aimingDelayTimer.Stop();
-            Shoot();
+            Shoot(animatedSprite2D.FlipH ? -1 : 1);
         }
 
         if (isAiming) 
@@ -138,10 +152,21 @@ public partial class Player : CharacterBody2D
         MoveAndSlide();
     }
     
-    private void Shoot() 
+    private void Shoot(float dir) 
     {
         isAiming = true;
         aimingDelayTimer.Start();
+
+        var busterShot = busterShotScene.Instantiate<BusterShot>();
+        GetTree().GetFirstNodeInGroup("shots").AddChild(busterShot);
+        
+        var toBusterMarkerPosition = BusterShotMarker.PlayerStateToPosition[currentState];
+        toBusterMarkerPosition.X = Mathf.Abs(toBusterMarkerPosition.X) * dir;
+
+        busterShotMarker.Position = toBusterMarkerPosition;
+
+        busterShot.GlobalPosition = busterShotMarker.GlobalPosition;
+        busterShot.Direction = dir;
     }
 
     private void UpdateState()
@@ -177,7 +202,7 @@ public partial class Player : CharacterBody2D
         particle.GlobalPosition = position;
         particle.FlipH = !animatedSprite2D.FlipH;
 
-        GetOwner().AddChild(particle);
+        GetTree().GetFirstNodeInGroup("Particles").AddChild(particle);
     }
 
     private void Dash(float xDirection)
@@ -196,7 +221,7 @@ public partial class Player : CharacterBody2D
             StartSmokeDelayTimer();
         }
 
-        velocityComponent.MoveX(dashingDirection);
+        Velocity = new Vector2(velocityComponent.MoveX(dashingDirection), Velocity.Y);
     }
 
     private void StartDash()

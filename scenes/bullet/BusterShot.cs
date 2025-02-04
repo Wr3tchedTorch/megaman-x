@@ -19,20 +19,27 @@ public partial class BusterShot : Area2D
 
 	public override void _Ready()
 	{
-
+		velocityComponent.Speed = speed;
 		animatedSprite2D.AnimationFinished += () => { if (animatedSprite2D.Animation == animationHit) QueueFree(); };
+		
+		BodyEntered += (Node2D other) => { Direction = null; animatedSprite2D.Play("hit"); };
+		AreaEntered += (Area2D other) => { Direction = null; animatedSprite2D.Play("hit"); };
 	}
 
     public override void _PhysicsProcess(double delta)
     {
+		GD.Print(Direction);
 		if (Direction == null)
 		{
 			return;
 		}		
-
-		velocityComponent.MoveX(Direction.Value);
-		var velocity = velocityComponent.GetVelocity();
-
-		GlobalPosition += velocity * speed;
+        
+		var velocity = new Vector2(velocityComponent.MoveX(Direction.Value), 0);
+		GlobalPosition += velocity * (float)delta;
     }
+
+	public void OnScreenExited() 
+	{
+		QueueFree();
+	}
 }

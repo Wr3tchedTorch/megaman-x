@@ -11,45 +11,33 @@ public partial class VelocityComponent : Node
 	private Vector2 toVelocity;
 	private float initialSpeed;
 
-	private CharacterBody2D parent;
-
 	public override void _Ready()
 	{
-		parent = GetParent<CharacterBody2D>();
 		initialSpeed = Speed;
 	}
 
-	public void MoveX(float dir)
+	public float MoveX(float dir)
 	{
 		toVelocity.X = dir * Speed;
-		parent.Velocity = new(toVelocity.X, parent.Velocity.Y);
+		return toVelocity.X;
 	}
 
-	public void MoveY(float dir)
+	public float MoveY(float dir)
 	{
 		toVelocity.Y = dir * Speed;
-		parent.Velocity = new(parent.Velocity.X, toVelocity.Y);
+		return toVelocity.Y;
 	}
 
-	public void Move(Vector2 dir)
+	public Vector2 Move(Vector2 dir)
 	{
 		toVelocity = dir * Speed;
-		parent.Velocity = toVelocity;
+		return toVelocity;
 	}
 	
 	public Vector2 GetVelocity() 
 	{
 		return toVelocity;
 	}
-
-	// public async void SetSpeed(float toSpeed, float howLong)
-	// {
-	// 	float oldSpeed = Speed;
-	// 	SetSpeed(toSpeed);
-	// 	await ToSignal(GetTree().CreateTimer(howLong), "timeout");
-	// 	SetSpeed(oldSpeed);
-	// 	EmitSignal(SignalName.OnDashFinished);
-	// }
 
 	public void ResetSpeed() 
 	{

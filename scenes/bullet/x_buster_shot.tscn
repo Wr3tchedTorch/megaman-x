@@ -4,6 +4,9 @@
 [ext_resource type="PackedScene" uid="uid://ciwigkcr5f3eb" path="res://scenes/component/VelocityComponent.tscn" id="2_estsh"]
 [ext_resource type="Texture2D" uid="uid://dpj5emxbkidcj" path="res://assets/x_buster_shot.png" id="3_ntkmt"]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_lwvjl"]
+radius = 5.0
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_fapsw"]
 atlas = ExtResource("3_ntkmt")
 region = Rect2(0, 0, 15, 15)
@@ -52,18 +55,24 @@ animations = [{
 "speed": 15.0
 }]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_lwvjl"]
-radius = 5.0
-
 [node name="XBusterShot" type="Area2D" node_paths=PackedStringArray("velocityComponent", "animatedSprite2D")]
+collision_layer = 2
+collision_mask = 12
 script = ExtResource("1_jwlys")
+damage = 25.0
+speed = 350.0
 velocityComponent = NodePath("VelocityComponent")
 animatedSprite2D = NodePath("AnimatedSprite2D")
 
 [node name="VelocityComponent" parent="." instance=ExtResource("2_estsh")]
 
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_lwvjl")
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_ltcwk")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_lwvjl")
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+scale = Vector2(0.2, 0.2)
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="OnScreenExited"]
