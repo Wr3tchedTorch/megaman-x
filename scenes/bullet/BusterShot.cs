@@ -28,7 +28,6 @@ public partial class BusterShot : Area2D
 
     public override void _PhysicsProcess(double delta)
     {
-		GD.Print(Direction);
 		if (Direction == null)
 		{
 			return;

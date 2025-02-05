@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=3 uid="uid://cvo1qtjxx8vyo"]
+[gd_scene load_steps=52 format=3 uid="uid://cvo1qtjxx8vyo"]
 
 [ext_resource type="Script" path="res://scenes/player/Player.cs" id="1_3copa"]
 [ext_resource type="PackedScene" uid="uid://ciwigkcr5f3eb" path="res://scenes/component/VelocityComponent.tscn" id="2_nmjj5"]
@@ -53,10 +53,6 @@ region = Rect2(96, 49, 48, 49)
 [sub_resource type="AtlasTexture" id="AtlasTexture_0cvkm"]
 atlas = ExtResource("4_db2p7")
 region = Rect2(0, 294, 48, 49)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_sbucl"]
-atlas = ExtResource("4_db2p7")
-region = Rect2(48, 294, 48, 49)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_10p78"]
 atlas = ExtResource("4_73d2k")
@@ -227,11 +223,8 @@ animations = [{
 "speed": 15.0
 }, {
 "frames": [{
-"duration": 1.0,
+"duration": 0.75,
 "texture": SubResource("AtlasTexture_0cvkm")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_sbucl")
 }],
 "loop": false,
 "name": &"land",
@@ -394,10 +387,13 @@ one_shot = true
 wait_time = 0.1
 one_shot = true
 
+[node name="ChargingTimer" type="Timer" parent="."]
+wait_time = 3.0
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -25)
 sprite_frames = SubResource("SpriteFrames_072hg")
-animation = &"shoot_idle"
+animation = &"land"
 
 [node name="DashSparkEffectMarker" type="Marker2D" parent="."]
 position = Vector2(-25, 0)
@@ -406,7 +402,7 @@ position = Vector2(-25, 0)
 position = Vector2(-11, 0)
 
 [node name="BusterShotMarker" type="Marker2D" parent="."]
-position = Vector2(15, -18)
+position = Vector2(13, -30)
 script = ExtResource("9_fe3gi")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

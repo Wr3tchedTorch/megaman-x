@@ -57,7 +57,7 @@ animations = [{
 
 [node name="XBusterShot" type="Area2D" node_paths=PackedStringArray("velocityComponent", "animatedSprite2D")]
 collision_layer = 2
-collision_mask = 12
+collision_mask = 4
 script = ExtResource("1_jwlys")
 damage = 25.0
 speed = 350.0
@@ -71,6 +71,7 @@ shape = SubResource("CircleShape2D_lwvjl")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_ltcwk")
+animation = &"hit"
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
 scale = Vector2(0.2, 0.2)
