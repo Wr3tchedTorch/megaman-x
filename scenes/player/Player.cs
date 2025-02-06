@@ -133,36 +133,9 @@ public partial class Player : CharacterBody2D
             }
         }
 
-        isCharging = Input.IsActionPressed(actionShoot);
-        if (isCharging && chargingTimer.IsStopped()) 
-        {
-            chargingTimer.Start();
-        } 
-        else if (isCharging && !chargingTimer.IsStopped() && chargingTimer.TimeLeft <= chargingTimer.WaitTime - .4f) 
-        {
-            animationPlayer.Play("level_one_charge");
-        }
-        else if (!isCharging && !chargingTimer.IsStopped())
-        {            
-            // stop charging animations
-            animationPlayer.Play("RESET");
-            if (chargingTimer.TimeLeft <= chargingTimer.WaitTime - .4f) 
-            {
-                GD.Print("Shooting Green Shot");
-            }
-            chargingTimer.Stop();
-        }        
-        if (isChargeAtMax && chargingTimer.IsStopped()) 
-        {
-            // stop lv 1 charge animation
-            // play lv 2 charge animation
 
-            if (!isCharging)
-            {
-                GD.Print("Shooting Max Shot");
-                isChargeAtMax = false;
-            }
-        }
+        isCharging = Input.IsActionPressed(actionShoot);        
+        ChargeBuster();
 
         if (Input.IsActionJustPressed(actionShoot))
         {            
@@ -241,6 +214,48 @@ public partial class Player : CharacterBody2D
         particle.FlipH = !animatedSprite2D.FlipH;
 
         GetTree().GetFirstNodeInGroup("Particles").AddChild(particle);
+    }
+
+    private void ChargeBuster() 
+    {        
+        if (isChargeAtMax && chargingTimer.IsStopped()) 
+        {
+            // stop lv 1 charge animation
+            // play lv 2 charge animation
+
+            if (!isCharging)
+            {
+                GD.Print("Shooting Max Shot");
+                isChargeAtMax = false;
+            }
+        }
+
+        if (!isCharging && !chargingTimer.IsStopped() ) 
+        {
+            // stop charging animations
+            animationPlayer.Play("RESET");
+            if (chargingTimer.TimeLeft <= chargingTimer.WaitTime - .4f) 
+            {
+                GD.Print("Shooting Green Shot");
+            }
+            chargingTimer.Stop();
+        }
+
+        if (!isCharging) 
+        {
+            return;
+        }
+
+        if (chargingTimer.IsStopped()) 
+        {
+            chargingTimer.Start();
+            return;
+        } 
+
+        if (chargingTimer.TimeLeft <= chargingTimer.WaitTime - .4f) 
+        {
+            animationPlayer.Play("level_one_charge");
+        }        
     }
 
     private void Dash(float xDirection)
