@@ -39,6 +39,7 @@ public partial class Player : CharacterBody2D
     private GravityComponent gravityComponent;
     private VelocityComponent velocityComponent;
     private AnimatedSprite2D animatedSprite2D;
+    private AnimationPlayer animationPlayer;
 
     private Timer dashCooldownTimer;
     private Timer dashDurationTimer;
@@ -62,6 +63,7 @@ public partial class Player : CharacterBody2D
         gravityComponent  = GetNode<GravityComponent>(nameof(GravityComponent));
         velocityComponent = GetNode<VelocityComponent>(nameof(VelocityComponent));
         animatedSprite2D  = GetNode<AnimatedSprite2D>(nameof(AnimatedSprite2D));
+        animationPlayer   = GetNode<AnimationPlayer>(nameof(AnimationPlayer));
 
         dashSparkEffectMarker = GetNode<Marker2D>("DashSparkEffectMarker");
         dashSmokeEffectMarker = GetNode<Marker2D>("DashSmokeEffectMarker");
@@ -133,14 +135,18 @@ public partial class Player : CharacterBody2D
 
         isCharging = Input.IsActionPressed(actionShoot);
         if (isCharging && chargingTimer.IsStopped()) 
-        {            
-            // play lv 1 charge animation
+        {
             chargingTimer.Start();
         } 
+        else if (isCharging && !chargingTimer.IsStopped() && chargingTimer.TimeLeft <= chargingTimer.WaitTime - .4f) 
+        {
+            animationPlayer.Play("level_one_charge");
+        }
         else if (!isCharging && !chargingTimer.IsStopped())
         {            
             // stop charging animations
-            if (chargingTimer.TimeLeft <= chargingTimer.WaitTime - 1.0f) 
+            animationPlayer.Play("RESET");
+            if (chargingTimer.TimeLeft <= chargingTimer.WaitTime - .4f) 
             {
                 GD.Print("Shooting Green Shot");
             }

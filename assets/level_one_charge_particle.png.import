@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dpsajgjj7mu8g"
-path="res://.godot/imported/lv1_charge_particle.png-c577784418124e6d1a33e562d13fedef.ctex"
+path="res://.godot/imported/level_one_charge_particle.png-c7d6ae92e4fc51e093c5aed485192f0f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/lv1_charge_particle.png"
-dest_files=["res://.godot/imported/lv1_charge_particle.png-c577784418124e6d1a33e562d13fedef.ctex"]
+source_file="res://assets/level_one_charge_particle.png"
+dest_files=["res://.godot/imported/level_one_charge_particle.png-c7d6ae92e4fc51e093c5aed485192f0f.ctex"]
 
 [params]
 

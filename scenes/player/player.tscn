@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=3 uid="uid://cvo1qtjxx8vyo"]
+[gd_scene load_steps=68 format=3 uid="uid://cvo1qtjxx8vyo"]
 
 [ext_resource type="Script" path="res://scenes/player/Player.cs" id="1_3copa"]
 [ext_resource type="PackedScene" uid="uid://ciwigkcr5f3eb" path="res://scenes/component/VelocityComponent.tscn" id="2_nmjj5"]
@@ -9,6 +9,94 @@
 [ext_resource type="PackedScene" uid="uid://cnvb2nrib0unw" path="res://scenes/bullet/x_buster_shot.tscn" id="4_mo64t"]
 [ext_resource type="PackedScene" uid="uid://b7r3knbou7k02" path="res://scenes/effect/DashSparkEffect.tscn" id="6_y2e2i"]
 [ext_resource type="Script" path="res://scenes/player/BusterShotMarker.cs" id="9_fe3gi"]
+[ext_resource type="Texture2D" uid="uid://dpsajgjj7mu8g" path="res://assets/level_one_charge_particle.png" id="9_wdddd"]
+
+[sub_resource type="Animation" id="Animation_dj8ed"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Lv1ChargeParticle:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Lv1ChargeParticle:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_f2mph"]
+resource_name = "level_one_charge"
+length = 0.42
+loop_mode = 1
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.01, 0.4),
+"transitions": PackedFloat32Array(2.29739, 1.07177),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0, 0.741176, 0.960784, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Lv1ChargeParticle:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32, 0.36, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Lv1ChargeParticle:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6ldsw"]
+_data = {
+"RESET": SubResource("Animation_dj8ed"),
+"level_one_charge": SubResource("Animation_f2mph")
+}
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v17mc"]
 atlas = ExtResource("4_db2p7")
@@ -353,6 +441,91 @@ animations = [{
 "speed": 15.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_2dypp"]
+atlas = ExtResource("9_wdddd")
+region = Rect2(0, 0, 44, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_beb3o"]
+atlas = ExtResource("9_wdddd")
+region = Rect2(44, 0, 44, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_10mnr"]
+atlas = ExtResource("9_wdddd")
+region = Rect2(88, 0, 44, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xpem7"]
+atlas = ExtResource("9_wdddd")
+region = Rect2(132, 0, 44, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y0o16"]
+atlas = ExtResource("9_wdddd")
+region = Rect2(176, 0, 44, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qc0h7"]
+atlas = ExtResource("9_wdddd")
+region = Rect2(220, 0, 44, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1meuw"]
+atlas = ExtResource("9_wdddd")
+region = Rect2(264, 0, 44, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fkggi"]
+atlas = ExtResource("9_wdddd")
+region = Rect2(308, 0, 44, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wsn5l"]
+atlas = ExtResource("9_wdddd")
+region = Rect2(352, 0, 44, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kgti2"]
+atlas = ExtResource("9_wdddd")
+region = Rect2(396, 0, 44, 46)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i6ijd"]
+atlas = ExtResource("9_wdddd")
+region = Rect2(440, 0, 44, 46)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4by3w"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2dypp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_beb3o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_10mnr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xpem7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y0o16")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qc0h7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1meuw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fkggi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wsn5l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kgti2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i6ijd")
+}],
+"loop": true,
+"name": &"default",
+"speed": 15.0
+}]
+
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_7modw"]
 radius = 8.5
 height = 33.0
@@ -363,6 +536,12 @@ script = ExtResource("1_3copa")
 dashSparkEffectScene = ExtResource("6_y2e2i")
 dashSmokeEffectScene = ExtResource("3_oswhr")
 busterShotScene = ExtResource("4_mo64t")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_6ldsw")
+}
+speed_scale = 0.8
 
 [node name="VelocityComponent" parent="." instance=ExtResource("2_nmjj5")]
 Speed = 200.0
@@ -394,6 +573,19 @@ wait_time = 3.0
 position = Vector2(0, -25)
 sprite_frames = SubResource("SpriteFrames_072hg")
 animation = &"land"
+
+[node name="Lv1ChargeParticle2" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(0, -20)
+sprite_frames = SubResource("SpriteFrames_4by3w")
+frame_progress = 0.656248
+
+[node name="Lv1ChargeParticle" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("9_wdddd")
+offset = Vector2(0, -19)
+hframes = 11
+region_rect = Rect2(0, 0, 44, 46)
 
 [node name="DashSparkEffectMarker" type="Marker2D" parent="."]
 position = Vector2(-25, 0)
