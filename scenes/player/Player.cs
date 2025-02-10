@@ -20,15 +20,15 @@ public partial class Player : CharacterBody2D
     private const float DASH_SPEED_BOOST = 1.50f;
     private const float AIMING_ANIMATION_DELAY = 0.35f;
 
-    private readonly StringName actionJump =  "jump";
-    private readonly StringName actionLeft =  "left";
+    private readonly StringName actionJump = "jump";
+    private readonly StringName actionLeft = "left";
     private readonly StringName actionRight = "right";
     private readonly StringName actionShoot = "shoot";
-    private readonly StringName actionDash =  "dash";
+    private readonly StringName actionDash = "dash";
 
     [Export] private PackedScene dashSparkEffectScene;
     [Export] private PackedScene dashSmokeEffectScene;
-    
+
     [ExportGroup("Shots")]
     [Export] private PackedScene busterShotScene;
 
@@ -38,56 +38,58 @@ public partial class Player : CharacterBody2D
 
     private GravityComponent gravityComponent;
     private VelocityComponent velocityComponent;
-    private AnimatedSprite2D animatedSprite2D;
     private AnimationPlayer animationPlayer;
+    private AnimatedSprite2D animatedSprite2D;
+    private AnimatedSprite2D chargeParticlesAnimated;
 
     private Timer dashCooldownTimer;
     private Timer dashDurationTimer;
     private Timer coyoteDurationTimer;
-    private Timer aimingDelayTimer;    
+    private Timer aimingDelayTimer;
     private Timer chargingTimer;
 
     private PlayerState currentState = PlayerState.Idle;
 
     private float dashingDirection = 0;
 
-    private bool isDashing     = false;
-    private bool canDash       = true;
+    private bool isDashing = false;
+    private bool canDash = true;
     private bool canSpawnSmoke = true;
-    private bool isAiming      = false;    
-    private bool isCharging    = false;
+    private bool isAiming = false;
+    private bool isCharging = false;
     private bool isChargeAtMax = false;
-    
+
     public override void _Ready()
     {
-        gravityComponent  = GetNode<GravityComponent>(nameof(GravityComponent));
+        gravityComponent = GetNode<GravityComponent>(nameof(GravityComponent));
         velocityComponent = GetNode<VelocityComponent>(nameof(VelocityComponent));
-        animatedSprite2D  = GetNode<AnimatedSprite2D>(nameof(AnimatedSprite2D));
-        animationPlayer   = GetNode<AnimationPlayer>(nameof(AnimationPlayer));
+        animationPlayer = GetNode<AnimationPlayer>(nameof(AnimationPlayer));
+        animatedSprite2D = GetNode<AnimatedSprite2D>(nameof(AnimatedSprite2D));
+        chargeParticlesAnimated = GetNode<AnimatedSprite2D>("ChargeParticles");
 
         dashSparkEffectMarker = GetNode<Marker2D>("DashSparkEffectMarker");
         dashSmokeEffectMarker = GetNode<Marker2D>("DashSmokeEffectMarker");
-        busterShotMarker      = GetNode<Marker2D>("BusterShotMarker");
+        busterShotMarker = GetNode<Marker2D>("BusterShotMarker");
 
-        dashCooldownTimer   = GetNode<Timer>("DashCooldownTimer");
-        dashDurationTimer   = GetNode<Timer>("DashDurationTimer");
+        dashCooldownTimer = GetNode<Timer>("DashCooldownTimer");
+        dashDurationTimer = GetNode<Timer>("DashDurationTimer");
         coyoteDurationTimer = GetNode<Timer>("CoyoteDurationTimer");
-        chargingTimer       = GetNode<Timer>("ChargingTimer");
-        
+        chargingTimer = GetNode<Timer>("ChargingTimer");
+
         aimingDelayTimer = new()
         {
-            WaitTime  = AIMING_ANIMATION_DELAY,
-            OneShot   = true,
+            WaitTime = AIMING_ANIMATION_DELAY,
+            OneShot = true,
             Autostart = false
-        };        
-        AddChild(aimingDelayTimer);        
+        };
+        AddChild(aimingDelayTimer);
         aimingDelayTimer.Name = "AimingDelayTimer";
 
-        chargingTimer.Timeout       += () => { isChargeAtMax = true; };
-        aimingDelayTimer.Timeout    += () => { isAiming = false; };
-        dashCooldownTimer.Timeout   += () => { canDash = true; };
-        dashDurationTimer.Timeout   += () => { FinishDash(); };
-        coyoteDurationTimer.Timeout += () => { GD.Print("applying gravity"); gravityComponent.ApplyGravity = true; };
+        chargingTimer.Timeout += () => { isChargeAtMax = true; };
+        aimingDelayTimer.Timeout += () => { isAiming = false; };
+        dashCooldownTimer.Timeout += () => { canDash = true; };
+        dashDurationTimer.Timeout += () => { FinishDash(); };
+        coyoteDurationTimer.Timeout += () => { gravityComponent.ApplyGravity = true; };
 
         gravityComponent.OnLanding += () => { currentState = PlayerState.Land; };
 
@@ -106,9 +108,9 @@ public partial class Player : CharacterBody2D
 
         Velocity = new Vector2(velocityComponent.MoveX(xDirection), Velocity.Y);
 
-        if (isDashing) 
+        if (isDashing)
         {
-            Dash(xDirection);            
+            Dash(xDirection);
         }
         else if (IsOnFloor())
         {
@@ -134,20 +136,20 @@ public partial class Player : CharacterBody2D
         }
 
 
-        isCharging = Input.IsActionPressed(actionShoot);        
+        isCharging = Input.IsActionPressed(actionShoot);
         ChargeBuster();
 
         if (Input.IsActionJustPressed(actionShoot))
-        {            
+        {
             aimingDelayTimer.Stop();
             Shoot(animatedSprite2D.FlipH ? -1 : 1);
         }
 
-        if (isAiming) 
+        if (isAiming)
         {
             animationName = $"{PlayerState.Shoot.ToString().ToLower()}_";
         }
-        
+
         animationName += currentState.ToString().ToLower();
 
         if (Velocity.X != 0)
@@ -155,22 +157,22 @@ public partial class Player : CharacterBody2D
             animatedSprite2D.FlipH = Velocity.X < 0;
         }
 
-        if (currentState != PlayerState.None) 
+        if (currentState != PlayerState.None)
         {
             animatedSprite2D.Animation = animationName;
         }
         UpdateState();
         MoveAndSlide();
     }
-    
-    private void Shoot(float dir) 
-    {        
+
+    private void Shoot(float dir)
+    {
         isAiming = true;
         aimingDelayTimer.Start();
 
         var busterShot = busterShotScene.Instantiate<BusterShot>();
         GetTree().GetFirstNodeInGroup("shots").AddChild(busterShot);
-            
+
         var toBusterMarkerPosition = BusterShotMarker.PlayerStateToPosition[currentState];
         toBusterMarkerPosition.X = Mathf.Abs(toBusterMarkerPosition.X) * dir;
 
@@ -216,46 +218,52 @@ public partial class Player : CharacterBody2D
         GetTree().GetFirstNodeInGroup("Particles").AddChild(particle);
     }
 
-    private void ChargeBuster() 
-    {        
-        if (isChargeAtMax && chargingTimer.IsStopped()) 
+    private void ChargeBuster()
+    {
+        if (!isCharging) 
         {
-            // stop lv 1 charge animation
-            // play lv 2 charge animation
+            chargeParticlesAnimated.Play("default");
+            animationPlayer.Play("RESET");
+        }
+
+        if (isChargeAtMax && chargingTimer.IsStopped())
+        {
+            chargeParticlesAnimated.Play("level_two_charge");
 
             if (!isCharging)
             {
                 GD.Print("Shooting Max Shot");
                 isChargeAtMax = false;
             }
-        }
+            return;
+        }        
 
-        if (!isCharging && !chargingTimer.IsStopped() ) 
+        if (!isCharging && !chargingTimer.IsStopped())
         {
             // stop charging animations
-            animationPlayer.Play("RESET");
-            if (chargingTimer.TimeLeft <= chargingTimer.WaitTime - .4f) 
+            if (chargingTimer.TimeLeft <= chargingTimer.WaitTime - .4f)
             {
                 GD.Print("Shooting Green Shot");
             }
-            chargingTimer.Stop();
-        }
 
-        if (!isCharging) 
-        {
+            chargingTimer.Stop();
             return;
         }
 
-        if (chargingTimer.IsStopped()) 
+        if (!isCharging)
+            return;
+
+        if (chargingTimer.IsStopped())
         {
             chargingTimer.Start();
             return;
-        } 
+        }
 
-        if (chargingTimer.TimeLeft <= chargingTimer.WaitTime - .4f) 
+        if (chargingTimer.TimeLeft <= chargingTimer.WaitTime - .4f)
         {
             animationPlayer.Play("level_one_charge");
-        }        
+            chargeParticlesAnimated.Play("level_one_charge");
+        }
     }
 
     private void Dash(float xDirection)
@@ -298,7 +306,7 @@ public partial class Player : CharacterBody2D
     private void FinishDash()
     {
         currentState = PlayerState.None;
-        isDashing = false;        
+        isDashing = false;
     }
 
     private async void StartSmokeDelayTimer()
