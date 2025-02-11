@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://ib27l0hqblfh"]
+
+[ext_resource type="PackedScene" uid="uid://gi0ox64tjmbn" path="res://scenes/bullet/base_shot.tscn" id="1_2vxoi"]
+[ext_resource type="Texture2D" uid="uid://caks378kmdune" path="res://assets/level_two_shot.png" id="2_emu8c"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xe66q"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_emu8c")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_jtrw6"]
+height = 26.0
+
+[node name="XLevelTwoShot" node_paths=PackedStringArray("animatedSprite2D") instance=ExtResource("1_2vxoi")]
+animatedSprite2D = NodePath("AnimatedSprite2D")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." index="2"]
+sprite_frames = SubResource("SpriteFrames_xe66q")
+offset = Vector2(9, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="3"]
+position = Vector2(9, 0)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_jtrw6")

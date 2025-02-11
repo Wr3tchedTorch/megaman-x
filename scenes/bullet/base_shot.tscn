@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://gi0ox64tjmbn"]
+
+[ext_resource type="Script" path="res://scenes/bullet/BusterShot.cs" id="1_1fpvo"]
+[ext_resource type="PackedScene" uid="uid://ciwigkcr5f3eb" path="res://scenes/component/VelocityComponent.tscn" id="2_wm6a6"]
+
+[node name="BaseShot" type="Area2D" node_paths=PackedStringArray("velocityComponent", "animatedSprite2D")]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("1_1fpvo")
+damage = 25.0
+speed = 350.0
+velocityComponent = NodePath("VelocityComponent")
+animatedSprite2D = NodePath("")
+
+[node name="VelocityComponent" parent="." instance=ExtResource("2_wm6a6")]
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+scale = Vector2(0.2, 0.2)
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="OnScreenExited"]

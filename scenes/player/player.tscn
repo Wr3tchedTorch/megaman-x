@@ -1,4 +1,4 @@
-[gd_scene load_steps=80 format=3 uid="uid://cvo1qtjxx8vyo"]
+[gd_scene load_steps=82 format=3 uid="uid://cvo1qtjxx8vyo"]
 
 [ext_resource type="Script" path="res://scenes/player/Player.cs" id="1_3copa"]
 [ext_resource type="PackedScene" uid="uid://ciwigkcr5f3eb" path="res://scenes/component/VelocityComponent.tscn" id="2_nmjj5"]
@@ -7,6 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://dvn7j078wvdf" path="res://assets/run.png" id="4_73d2k"]
 [ext_resource type="Texture2D" uid="uid://6ta6a0ga15nc" path="res://assets/x_sheet.png" id="4_db2p7"]
 [ext_resource type="PackedScene" uid="uid://cnvb2nrib0unw" path="res://scenes/bullet/x_buster_shot.tscn" id="4_mo64t"]
+[ext_resource type="PackedScene" uid="uid://rrelimouyhp0" path="res://scenes/bullet/x_level_one_shot.tscn" id="5_5xonl"]
+[ext_resource type="PackedScene" uid="uid://ib27l0hqblfh" path="res://scenes/bullet/x_level_two_shot.tscn" id="6_wmxqc"]
 [ext_resource type="PackedScene" uid="uid://b7r3knbou7k02" path="res://scenes/effect/DashSparkEffect.tscn" id="6_y2e2i"]
 [ext_resource type="Script" path="res://scenes/player/BusterShotMarker.cs" id="9_fe3gi"]
 [ext_resource type="Texture2D" uid="uid://dpsajgjj7mu8g" path="res://assets/level_one_charge_particle.png" id="9_wdddd"]
@@ -579,6 +581,8 @@ script = ExtResource("1_3copa")
 dashSparkEffectScene = ExtResource("6_y2e2i")
 dashSmokeEffectScene = ExtResource("3_oswhr")
 busterShotScene = ExtResource("4_mo64t")
+levelOneShotScene = ExtResource("5_5xonl")
+levelTwoShotScene = ExtResource("6_wmxqc")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

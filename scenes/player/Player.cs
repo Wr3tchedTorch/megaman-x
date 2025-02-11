@@ -31,6 +31,8 @@ public partial class Player : CharacterBody2D
 
     [ExportGroup("Shots")]
     [Export] private PackedScene busterShotScene;
+    [Export] private PackedScene levelOneShotScene;
+    [Export] private PackedScene levelTwoShotScene;
 
     private Marker2D dashSparkEffectMarker;
     private Marker2D dashSmokeEffectMarker;
@@ -142,7 +144,7 @@ public partial class Player : CharacterBody2D
         if (Input.IsActionJustPressed(actionShoot))
         {
             aimingDelayTimer.Stop();
-            Shoot(animatedSprite2D.FlipH ? -1 : 1);
+            Shoot(animatedSprite2D.FlipH ? -1 : 1, busterShotScene);
         }
 
         if (isAiming)
@@ -165,12 +167,12 @@ public partial class Player : CharacterBody2D
         MoveAndSlide();
     }
 
-    private void Shoot(float dir)
+    private void Shoot(float dir, PackedScene shotScene)
     {
         isAiming = true;
         aimingDelayTimer.Start();
 
-        var busterShot = busterShotScene.Instantiate<BusterShot>();
+        var busterShot = shotScene.Instantiate<BusterShot>();
         GetTree().GetFirstNodeInGroup("shots").AddChild(busterShot);
 
         var toBusterMarkerPosition = BusterShotMarker.PlayerStateToPosition[currentState];
@@ -178,6 +180,7 @@ public partial class Player : CharacterBody2D
 
         busterShotMarker.Position = toBusterMarkerPosition;
 
+        busterShot.FlipH(animatedSprite2D.FlipH);
         busterShot.GlobalPosition = busterShotMarker.GlobalPosition;
         busterShot.Direction = dir;
     }
@@ -232,6 +235,7 @@ public partial class Player : CharacterBody2D
 
             if (!isCharging)
             {
+                Shoot(animatedSprite2D.FlipH ? -1 : 1, levelTwoShotScene);
                 GD.Print("Shooting Max Shot");
                 isChargeAtMax = false;
             }
@@ -243,6 +247,7 @@ public partial class Player : CharacterBody2D
             // stop charging animations
             if (chargingTimer.TimeLeft <= chargingTimer.WaitTime - .4f)
             {
+                Shoot(animatedSprite2D.FlipH ? -1 : 1, levelOneShotScene);
                 GD.Print("Shooting Green Shot");
             }
 

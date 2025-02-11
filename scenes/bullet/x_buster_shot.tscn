@@ -1,11 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://cnvb2nrib0unw"]
+[gd_scene load_steps=10 format=3 uid="uid://cnvb2nrib0unw"]
 
-[ext_resource type="Script" path="res://scenes/bullet/BusterShot.cs" id="1_jwlys"]
-[ext_resource type="PackedScene" uid="uid://ciwigkcr5f3eb" path="res://scenes/component/VelocityComponent.tscn" id="2_estsh"]
+[ext_resource type="PackedScene" uid="uid://gi0ox64tjmbn" path="res://scenes/bullet/base_shot.tscn" id="1_brky4"]
 [ext_resource type="Texture2D" uid="uid://dpj5emxbkidcj" path="res://assets/x_buster_shot.png" id="3_ntkmt"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_lwvjl"]
-radius = 5.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fapsw"]
 atlas = ExtResource("3_ntkmt")
@@ -27,7 +23,7 @@ region = Rect2(30, 0, 15, 15)
 atlas = ExtResource("3_ntkmt")
 region = Rect2(45, 0, 15, 15)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_ltcwk"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_5f3o0"]
 animations = [{
 "frames": [{
 "duration": 1.0,
@@ -55,25 +51,16 @@ animations = [{
 "speed": 15.0
 }]
 
-[node name="XBusterShot" type="Area2D" node_paths=PackedStringArray("velocityComponent", "animatedSprite2D")]
-collision_layer = 2
-collision_mask = 4
-script = ExtResource("1_jwlys")
-damage = 25.0
-speed = 350.0
-velocityComponent = NodePath("VelocityComponent")
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_x00c8"]
+radius = 6.0
+height = 12.0
+
+[node name="XBusterShot" node_paths=PackedStringArray("animatedSprite2D") instance=ExtResource("1_brky4")]
 animatedSprite2D = NodePath("AnimatedSprite2D")
 
-[node name="VelocityComponent" parent="." instance=ExtResource("2_estsh")]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_lwvjl")
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = SubResource("SpriteFrames_ltcwk")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." index="2"]
+sprite_frames = SubResource("SpriteFrames_5f3o0")
 animation = &"hit"
 
-[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
-scale = Vector2(0.2, 0.2)
-
-[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="OnScreenExited"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="3"]
+shape = SubResource("CapsuleShape2D_x00c8")
