@@ -118,8 +118,8 @@ public partial class Player : CharacterBody2D
             toVelocity.X = velocityComponent.Dash(xDirection, actionDash);            
 
             if (canSpawnSmoke)
-            {
-                SpawnParticle(dashSmokeEffectMarker.GlobalPosition, dashSmokeEffectScene);
+            {                
+                Global.SpawnParticle(dashSmokeEffectMarker.GlobalPosition, dashSmokeEffectScene, !animatedSprite2D.FlipH);
 
                 canSpawnSmoke = false;
                 StartSmokeDelayTimer();
@@ -225,15 +225,6 @@ public partial class Player : CharacterBody2D
         currentState = PlayerState.Idle;
     }
 
-    private void SpawnParticle(Vector2 position, PackedScene packedScene)
-    {
-        AnimatedSprite2D particle = packedScene.Instantiate<AnimatedSprite2D>();
-        particle.GlobalPosition = position;
-        particle.FlipH = !animatedSprite2D.FlipH;
-
-        GetTree().GetFirstNodeInGroup("Particles").AddChild(particle);
-    }
-
     private void ChargeBuster()
     {
         if (!isCharging)
@@ -289,7 +280,7 @@ public partial class Player : CharacterBody2D
         dashSparkEffectMarker.FlipH(animatedSprite2D.FlipH);
         dashSmokeEffectMarker.FlipH(animatedSprite2D.FlipH);
 
-        SpawnParticle(dashSparkEffectMarker.GlobalPosition, dashSparkEffectScene);
+        Global.SpawnParticle(dashSparkEffectMarker.GlobalPosition, dashSparkEffectScene, !animatedSprite2D.FlipH);
 
         currentState = PlayerState.Dash;
         canDash = false;
