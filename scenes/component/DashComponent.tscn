@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://fc720q8uawej"]
+
+[ext_resource type="Script" path="res://scenes/component/DashComponent.cs" id="1_ucblg"]
+
+[node name="DashComponent" type="Node"]
+script = ExtResource("1_ucblg")
