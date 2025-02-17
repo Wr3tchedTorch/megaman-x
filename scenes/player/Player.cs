@@ -38,7 +38,7 @@ public partial class Player : CharacterBody2D
 
     private Marker2D dashSparkEffectMarker;
     private Marker2D dashSmokeEffectMarker;
-    private Marker2D busterShotMarker;
+    private BusterShotMarker busterShotMarker;
 
     private GravityComponent gravityComponent;
     private VelocityComponent velocityComponent;
@@ -75,7 +75,7 @@ public partial class Player : CharacterBody2D
 
         dashSparkEffectMarker = GetNode<Marker2D>("DashSparkEffectMarker");
         dashSmokeEffectMarker = GetNode<Marker2D>("DashSmokeEffectMarker");
-        busterShotMarker = GetNode<Marker2D>("BusterShotMarker");
+        busterShotMarker      = GetNode<BusterShotMarker>("BusterShotMarker");
 
         dashCooldownTimer = GetNode<Timer>("DashCooldownTimer");
         coyoteDurationTimer = GetNode<Timer>("CoyoteDurationTimer");
@@ -198,10 +198,7 @@ public partial class Player : CharacterBody2D
         isAiming = true;
         aimingDelayTimer.Start();
 
-        var toBusterMarkerPosition = BusterShotMarker.PlayerStateToPosition[currentState];
-        toBusterMarkerPosition.X = Mathf.Abs(toBusterMarkerPosition.X) * dir;
-
-        busterShotMarker.Position = toBusterMarkerPosition;
+        busterShotMarker.UpdatePosition(currentState, (int) dir);
 
         var shotScene = currentChargeLevel switch
         {

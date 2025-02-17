@@ -12,5 +12,14 @@ public partial class BusterShotMarker : Marker2D
 		{PlayerState.Jump, new Vector2(13, -30) },
 		{PlayerState.Fall, new Vector2(15, -28) },
 		{PlayerState.Dash, new Vector2(24, -14) },
+		{PlayerState.None, new Vector2(24, -14) },
 	};
+
+	public void UpdatePosition(PlayerState state, int dir) 
+	{			
+        var toBusterMarkerPosition = PlayerStateToPosition[state];
+        toBusterMarkerPosition.X = Mathf.Abs(toBusterMarkerPosition.X) * dir;
+
+        Position = toBusterMarkerPosition;
+	}
 }
