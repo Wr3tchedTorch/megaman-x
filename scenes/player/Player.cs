@@ -55,10 +55,13 @@ public partial class Player : CharacterBody2D
     private PlayerState currentState = PlayerState.Idle;
 
     private float dashingDirection = 0;
+    private int currentChargeLevel = 0;
 
     private bool canDash = true;
     private bool canSpawnSmoke = true;
     private bool isAiming = false;
+
+    int FacingDirection => animatedSprite2D.FlipH ? -1 : 1;
 
     public override void _Ready()
     {
@@ -90,7 +93,8 @@ public partial class Player : CharacterBody2D
         coyoteDurationTimer.Timeout += () => { gravityComponent.ApplyGravity = true; };
         dashCooldownTimer.Timeout += () => { canDash = true; };
 
-        shotComponent.ChargeFinished += level => { OnChargeFinished(level); };
+        shotComponent.ChargeChanged += level => { OnChargeChanged(level); };
+        shotComponent.ChargeFinished += () => { OnChargeFinish(); };
 
         dashComponent.DashFinish += OnDashFinish;
         dashComponent.DashStart += OnDashStart;
@@ -144,7 +148,7 @@ public partial class Player : CharacterBody2D
 
             if (Input.IsActionJustPressed(actionDash) && currentState != PlayerState.Dash && canDash)
             {
-                dashComponent.StartDash(DASH_SPEED_BOOST, animatedSprite2D.FlipH ? -1 : 1, dashDuration);
+                dashComponent.StartDash(DASH_SPEED_BOOST, FacingDirection, dashDuration);
             }
         }
 
@@ -155,12 +159,15 @@ public partial class Player : CharacterBody2D
         else
         {
             shotComponent.FinishBusterCharge();
+
+            if (currentChargeLevel > 0)
+                Shoot(FacingDirection);
         }
 
         if (Input.IsActionJustPressed(actionShoot))
-        {
+        {            
             aimingDelayTimer.Stop();
-            Shoot(animatedSprite2D.FlipH ? -1 : 1, busterShotScene);
+            Shoot(FacingDirection);
         }
 
         if (isAiming)
@@ -186,7 +193,7 @@ public partial class Player : CharacterBody2D
         MoveAndSlide();
     }
 
-    private void Shoot(float dir, PackedScene shotScene)
+    private void Shoot(float dir)
     {
         isAiming = true;
         aimingDelayTimer.Start();
@@ -196,7 +203,17 @@ public partial class Player : CharacterBody2D
 
         busterShotMarker.Position = toBusterMarkerPosition;
 
+        var shotScene = currentChargeLevel switch
+        {
+            0 => busterShotScene,
+            1 => levelOneShotScene,
+            2 => levelTwoShotScene,
+            _ => null
+        };
+
         shotComponent.Shoot(dir, shotScene, busterShotMarker.GlobalPosition, animatedSprite2D.FlipH);
+
+        currentChargeLevel = 0;
     }
 
     private void UpdateState()
@@ -250,9 +267,10 @@ public partial class Player : CharacterBody2D
         currentState = PlayerState.None;
     }
 
-    private void OnChargeFinished(int level)
+    private void OnChargeChanged(int level)
     {
-        string levelName = level switch {
+        string levelName = level switch
+        {
             1 => "one",
             2 => "two",
             3 => "three",
@@ -260,9 +278,15 @@ public partial class Player : CharacterBody2D
             _ => "none"
         };
 
-        // Shoot correct shot from {level}
+        currentChargeLevel = level;
 
-        animationPlayer.Play("level_{levelName}_charge");
+        animationPlayer.Play("charge");
         chargeParticlesAnimated.Play($"level_{levelName}_charge");
+    }
+
+    private void OnChargeFinish()
+    {
+        animationPlayer.Play("RESET");
+        chargeParticlesAnimated.Play("default");
     }
 }

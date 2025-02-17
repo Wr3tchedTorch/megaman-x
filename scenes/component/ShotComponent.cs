@@ -8,7 +8,8 @@ public partial class ShotComponent : Node
 {
 	private readonly StringName shotsGroup = "shots";
 
-	[Signal] public delegate void ChargeFinishedEventHandler(int level);
+	[Signal] public delegate void ChargeChangedEventHandler(int level);
+	[Signal] public delegate void ChargeFinishedEventHandler();
 
 	[Export] private float[] chargeBreakpoints;
 	[Export] private Timer chargeTimer;
@@ -35,7 +36,7 @@ public partial class ShotComponent : Node
 		if (TimePassed > chargeBreakpoints[currentChargeLevel])
 		{
 			currentChargeLevel++;
-			EmitSignal(SignalName.ChargeFinished, currentChargeLevel);
+			EmitSignal(SignalName.ChargeChanged, currentChargeLevel);
 		}
 	}
 
@@ -53,6 +54,8 @@ public partial class ShotComponent : Node
 	{
 		currentChargeLevel = 0;
 		chargeTimer.Stop();
+
+		EmitSignal(SignalName.ChargeFinished);
 	}
 
 	public void Shoot(float dir, PackedScene shotScene, Vector2 spawnPosition, bool flipH)
