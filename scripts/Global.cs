@@ -4,6 +4,9 @@ namespace Game.Scripts;
 
 public partial class Global : Node
 {
+    private readonly StringName groupParticles = "Particles";
+    private readonly StringName groupTimers    = "Timers";
+
     private static Global instance;
 
     public override void _EnterTree() 
@@ -17,6 +20,6 @@ public partial class Global : Node
         particle.GlobalPosition = position;
         particle.FlipH = flip;
 
-        instance.GetTree().GetFirstNodeInGroup("Particles").AddChild(particle);
+        instance.GetTree().GetFirstNodeInGroup("Particles").AddChild(particle);        
     }
 }

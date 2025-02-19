@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Game.Component;
 using Godot;
 
@@ -22,8 +23,8 @@ public partial class BusterShot : Area2D
 		velocityComponent.Speed = speed;
 		animatedSprite2D.AnimationFinished += () => { if (animatedSprite2D.Animation == animationHit) QueueFree(); };
 
-		BodyEntered += (Node2D other) => { Direction = null; animatedSprite2D.Play("hit"); };
-		AreaEntered += (Area2D other) => { Direction = null; animatedSprite2D.Play("hit"); };
+		BodyEntered += other => { Direction = null; animatedSprite2D.Play("hit"); };
+		AreaEntered += other => { Direction = null; animatedSprite2D.Play("hit"); };
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -39,16 +40,9 @@ public partial class BusterShot : Area2D
 
 	public void FlipH(bool flip)
 	{
-		var offset = animatedSprite2D.Offset;
-		offset.X = flip ? -9 : 9;
-		animatedSprite2D.Offset = offset;
-
-		var shape = GetNode<CollisionShape2D>(nameof(CollisionShape2D));
-		var position = shape.Position;
-		position.X = flip ? -9 : 9;
-		shape.Position = position;
-
-		animatedSprite2D.FlipH = flip;
+		var toScale = Scale;
+		toScale.X = flip ? -1 : 1;
+		Scale = toScale;
 	}
 
 	public void OnScreenExited()

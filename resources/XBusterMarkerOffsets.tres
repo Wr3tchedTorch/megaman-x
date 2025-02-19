@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="BusterMarkerResource" load_steps=2 format=3 uid="uid://dhwh3e4mp8uhp"]
+
+[ext_resource type="Script" path="res://resources/BusterMarkerResource.cs" id="1_2m3i5"]
+
+[resource]
+script = ExtResource("1_2m3i5")
+Idle = Vector2(15, -18)
+Land = Vector2(15, -18)
+Run = Vector2(18, -21)
+Jump = Vector2(13, -30)
+Fall = Vector2(15, -28)
+Dash = Vector2(24, -14)
+None = Vector2(24, -14)

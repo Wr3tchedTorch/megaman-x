@@ -1,10 +1,7 @@
-// TODO: add shooting
-// TODO: add charging lv 1 and 2
 // TODO: add wall slide
 
 // TODO: adjust dash parameters (movement speed, dash speed boost, dash duration)
 // TODO: (maybe) make velocity on the x axis affect gravity
-// TODO: (maybe) extract all dash logic related code from Player.cs into VelocityComponent.cs
 
 using Game.Component;
 using Game.Scripts;
@@ -12,41 +9,52 @@ using Godot;
 
 namespace Game.Player;
 
-public partial class Player : CharacterBody2D
+[GlobalClass]
+public partial class BasePlayer : CharacterBody2D
 {
     private const float DASH_SPEED_BOOST = 1.60f;
 
     private const float DASH_SMOKE_SPAWN_DELAY = .06f;
     private const float AIMING_ANIMATION_DELAY = .35f;
 
-    private readonly StringName actionJump = "jump";
-    private readonly StringName actionLeft = "left";
-    private readonly StringName actionRight = "right";
-    private readonly StringName actionShoot = "shoot";
-    private readonly StringName actionDash = "dash";
+    private const float DASH_COOLDOWN = .35f;
+    private const float COYOTE_DURATION = .1f;
 
-    [ExportGroup("Player Attributes")]
+    [ExportGroup("Dependencies")]
+    [Export] private AnimationPlayer animationPlayer;
+    [Export] private AnimatedSprite2D animatedSprite2D;
+    [Export] private AnimatedSprite2D chargeParticlesAnimated;
+
+    [ExportGroup("Animation")]
+    [Export] private StringName animationCharge = "charge";
+    [Export] private StringName animationDefault = "default";
+    [Export] private StringName animationReset = "RESET";
+
+    [ExportGroup("Input")]
+    [Export] private StringName actionJump = "jump";
+    [Export] private StringName actionLeft = "left";
+    [Export] private StringName actionRight = "right";
+    [Export] private StringName actionDash = "dash";
+    [Export] private StringName actionShoot = "shoot";
+
+    [ExportGroup("Attributes")]
     [Export] private float dashDuration = .4f;
 
     [Export] private PackedScene dashSparkEffectScene;
     [Export] private PackedScene dashSmokeEffectScene;
 
-    [ExportGroup("Shots")]
-    [Export] private PackedScene busterShotScene;
-    [Export] private PackedScene levelOneShotScene;
-    [Export] private PackedScene levelTwoShotScene;
+    [ExportGroup("Shots Scenes")]
+    [Export] private PackedScene[] shotScenes;
 
-    private Marker2D dashSparkEffectMarker;
-    private Marker2D dashSmokeEffectMarker;
-    private BusterShotMarker busterShotMarker;
+    [ExportGroup("Markers")]
+    [Export] private Marker2D dashSparkEffectMarker;
+    [Export] private Marker2D dashSmokeEffectMarker;
+    [Export] private BusterShotMarker busterShotMarker;
 
     private GravityComponent gravityComponent;
     private VelocityComponent velocityComponent;
     private DashComponent dashComponent;
     private ShotComponent shotComponent;
-    private AnimationPlayer animationPlayer;
-    private AnimatedSprite2D animatedSprite2D;
-    private AnimatedSprite2D chargeParticlesAnimated;
 
     private Timer dashCooldownTimer;
     private Timer coyoteDurationTimer;
@@ -69,25 +77,37 @@ public partial class Player : CharacterBody2D
         velocityComponent = GetNode<VelocityComponent>(nameof(VelocityComponent));
         shotComponent = GetNode<ShotComponent>(nameof(ShotComponent));
         dashComponent = GetNode<DashComponent>(nameof(DashComponent));
+
         animationPlayer = GetNode<AnimationPlayer>(nameof(AnimationPlayer));
         animatedSprite2D = GetNode<AnimatedSprite2D>(nameof(AnimatedSprite2D));
         chargeParticlesAnimated = GetNode<AnimatedSprite2D>("ChargeParticles");
 
-        dashSparkEffectMarker = GetNode<Marker2D>("DashSparkEffectMarker");
-        dashSmokeEffectMarker = GetNode<Marker2D>("DashSmokeEffectMarker");
-        busterShotMarker      = GetNode<BusterShotMarker>("BusterShotMarker");
-
-        dashCooldownTimer = GetNode<Timer>("DashCooldownTimer");
-        coyoteDurationTimer = GetNode<Timer>("CoyoteDurationTimer");
-
         aimingDelayTimer = new()
         {
+            Name = "AimingDelayTimer",
             WaitTime = AIMING_ANIMATION_DELAY,
             OneShot = true,
             Autostart = false
         };
         AddChild(aimingDelayTimer);
-        aimingDelayTimer.Name = "AimingDelayTimer";
+
+        dashCooldownTimer = new()
+        {
+            Name = "DashCooldownTimer",
+            WaitTime = DASH_COOLDOWN,
+            OneShot = true,
+            Autostart = false
+        };
+        AddChild(dashCooldownTimer);
+
+        coyoteDurationTimer = new()
+        {
+            Name = "CoyoteDurationTimer",
+            WaitTime = COYOTE_DURATION,
+            OneShot = true,
+            Autostart = false
+        };
+        AddChild(coyoteDurationTimer);
 
         aimingDelayTimer.Timeout += () => { isAiming = false; };
         coyoteDurationTimer.Timeout += () => { gravityComponent.ApplyGravity = true; };
@@ -111,15 +131,16 @@ public partial class Player : CharacterBody2D
     public override void _PhysicsProcess(double delta)
     {
         string animationName = "";
-        var isStanding = !gravityComponent.ApplyGravity;
-        var xDir = Input.GetAxis(actionLeft, actionRight);
-
         var toVelocity = Velocity;
-        toVelocity.X = velocityComponent.MoveX(xDir);
+
+        var isStanding = !gravityComponent.ApplyGravity;
+        var xDirection = Input.GetAxis(actionLeft, actionRight);
+
+        toVelocity.X = velocityComponent.MoveX(xDirection);
 
         if (currentState == PlayerState.Dash)
         {
-            toVelocity.X = dashComponent.Dash(xDir, actionDash);
+            toVelocity.X = dashComponent.Dash(xDirection, actionDash);
 
             if (canSpawnSmoke)
             {
@@ -129,13 +150,14 @@ public partial class Player : CharacterBody2D
                 StartSmokeDelayTimer();
             }
         }
-        else if (isStanding)
-        {
-            velocityComponent.ResetSpeed();
-        }
 
         if (isStanding)
         {
+            if (currentState != PlayerState.Dash)
+            {
+                velocityComponent.ResetSpeed();
+            }
+
             if (coyoteDurationTimer.IsStopped() && !IsOnFloor())
             {
                 coyoteDurationTimer.Start();
@@ -161,11 +183,13 @@ public partial class Player : CharacterBody2D
             shotComponent.FinishBusterCharge();
 
             if (currentChargeLevel > 0)
+            {
                 Shoot(FacingDirection);
+            }
         }
 
         if (Input.IsActionJustPressed(actionShoot))
-        {            
+        {
             aimingDelayTimer.Stop();
             Shoot(FacingDirection);
         }
@@ -193,22 +217,14 @@ public partial class Player : CharacterBody2D
         MoveAndSlide();
     }
 
-    private void Shoot(float dir)
+    protected virtual void Shoot(float dir)
     {
         isAiming = true;
         aimingDelayTimer.Start();
 
-        busterShotMarker.UpdatePosition(currentState, (int) dir);
+        busterShotMarker.UpdatePosition(currentState, (int)dir);
 
-        var shotScene = currentChargeLevel switch
-        {
-            0 => busterShotScene,
-            1 => levelOneShotScene,
-            2 => levelTwoShotScene,
-            _ => null
-        };
-
-        shotComponent.Shoot(dir, shotScene, busterShotMarker.GlobalPosition, animatedSprite2D.FlipH);
+        shotComponent.Shoot(dir, shotScenes[currentChargeLevel], busterShotMarker.GlobalPosition, animatedSprite2D.FlipH);
 
         currentChargeLevel = 0;
     }
@@ -277,13 +293,13 @@ public partial class Player : CharacterBody2D
 
         currentChargeLevel = level;
 
-        animationPlayer.Play("charge");
+        animationPlayer.Play(animationCharge);
         chargeParticlesAnimated.Play($"level_{levelName}_charge");
     }
 
     private void OnChargeFinish()
     {
-        animationPlayer.Play("RESET");
-        chargeParticlesAnimated.Play("default");
+        animationPlayer.Play(animationReset);
+        chargeParticlesAnimated.Play(animationDefault);
     }
 }
