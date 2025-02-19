@@ -1,4 +1,4 @@
-[gd_scene load_steps=80 format=3 uid="uid://dia04oqfawmtx"]
+[gd_scene load_steps=78 format=3 uid="uid://dia04oqfawmtx"]
 
 [ext_resource type="PackedScene" uid="uid://cvo1qtjxx8vyo" path="res://scenes/player/base_player.tscn" id="1_lheqr"]
 [ext_resource type="Texture2D" uid="uid://6ta6a0ga15nc" path="res://assets/x_sheet.png" id="2_2krr3"]
@@ -10,22 +10,8 @@
 [ext_resource type="PackedScene" uid="uid://ib27l0hqblfh" path="res://scenes/bullet/x_level_two_shot.tscn" id="5_75ulu"]
 [ext_resource type="Texture2D" uid="uid://d2ryjjweivwpm" path="res://assets/level_two_charge_particle.png" id="5_81w8o"]
 [ext_resource type="Script" path="res://scenes/player/BusterShotMarker.cs" id="6_krknh"]
+[ext_resource type="AnimationLibrary" uid="uid://caj0c7jc8dv7b" path="res://scenes/player/player_x_charge.tres" id="6_q6kiu"]
 [ext_resource type="Resource" uid="uid://dhwh3e4mp8uhp" path="res://resources/XBusterMarkerOffsets.tres" id="8_f2l1n"]
-
-[sub_resource type="Animation" id="Animation_dj8ed"]
-length = 0.001
-
-[sub_resource type="Animation" id="Animation_f2mph"]
-resource_name = "charge"
-length = 0.25
-loop_mode = 1
-step = 0.01
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_6ldsw"]
-_data = {
-"RESET": SubResource("Animation_dj8ed"),
-"charge": SubResource("Animation_f2mph")
-}
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v17mc"]
 atlas = ExtResource("2_2krr3")
@@ -549,8 +535,12 @@ animations = [{
 radius = 8.5
 height = 33.0
 
-[node name="PlayerX" node_paths=PackedStringArray("dashSparkEffectMarker", "dashSmokeEffectMarker", "busterShotMarker") instance=ExtResource("1_lheqr")]
+[node name="PlayerX" node_paths=PackedStringArray("animationPlayer", "animatedSprite2D", "chargeParticlesAnimated", "dashSparkEffectMarker", "dashSmokeEffectMarker", "busterShotMarker") instance=ExtResource("1_lheqr")]
 script = ExtResource("2_oo31a")
+animationPlayer = NodePath("AnimationPlayer")
+animatedSprite2D = NodePath("AnimatedSprite2D")
+chargeParticlesAnimated = NodePath("ChargeParticles")
+shotCooldown = 0.05
 shotScenes = Array[PackedScene]([ExtResource("3_wj0va"), ExtResource("4_lor8t"), ExtResource("5_75ulu")])
 dashSparkEffectMarker = NodePath("DashSparkEffectMarker")
 dashSmokeEffectMarker = NodePath("DashSmokeEffectMarker")
@@ -558,12 +548,11 @@ busterShotMarker = NodePath("BusterShotMarker")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." index="0"]
 libraries = {
-"": SubResource("AnimationLibrary_6ldsw")
+"": ExtResource("6_q6kiu")
 }
 speed_scale = 2.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." index="6"]
-modulate = Color(0.647546, 0.875605, 0.986178, 1)
 position = Vector2(0, -25)
 sprite_frames = SubResource("SpriteFrames_0ohyg")
 animation = &"land"

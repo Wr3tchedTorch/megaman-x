@@ -18,10 +18,17 @@ public partial class ShotComponent : Node
 
 	float TimePassed => chargeBreakpoints.Sum() - (float)chargeTimer.TimeLeft;
 	bool IsCharging => !chargeTimer.IsStopped();
+	bool IsChargeAtMax => currentChargeLevel == chargeBreakpoints.Length;
 
 	public override void _Ready()
 	{
 		chargeTimer.WaitTime = chargeBreakpoints.Sum();
+		chargeTimer.Timeout += () => 
+		{
+			if (IsChargeAtMax) return;
+
+			NextChargeLevel();
+		};
 	}
 
 	public override void _Process(double delta)
@@ -35,8 +42,7 @@ public partial class ShotComponent : Node
 
 		if (TimePassed > chargeBreakpoints[currentChargeLevel])
 		{
-			currentChargeLevel++;
-			EmitSignal(SignalName.ChargeChanged, currentChargeLevel);
+			NextChargeLevel();
 		}
 	}
 
@@ -60,7 +66,7 @@ public partial class ShotComponent : Node
 
 	public void Shoot(float dir, PackedScene shotScene, Vector2 spawnPosition, bool flipH)
 	{
-		if (IsCharging) 
+		if (IsCharging)
 		{
 			FinishBusterCharge();
 		}
@@ -72,4 +78,11 @@ public partial class ShotComponent : Node
 		busterShot.GlobalPosition = spawnPosition;
 		busterShot.Direction = dir;
 	}
+
+	private void NextChargeLevel()
+	{
+		currentChargeLevel++;
+		EmitSignal(SignalName.ChargeChanged, currentChargeLevel);
+	}
 }
+

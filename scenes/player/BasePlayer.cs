@@ -15,7 +15,7 @@ public partial class BasePlayer : CharacterBody2D
     private const float DASH_SPEED_BOOST = 1.60f;
 
     private const float DASH_SMOKE_SPAWN_DELAY = .06f;
-    private const float AIMING_ANIMATION_DELAY = .35f;
+    private const float AIMING_ANIMATION_DELAY = .35f;    
 
     private const float DASH_COOLDOWN = .35f;
     private const float COYOTE_DURATION = .1f;
@@ -39,12 +39,14 @@ public partial class BasePlayer : CharacterBody2D
 
     [ExportGroup("Attributes")]
     [Export] private float dashDuration = .4f;
+    [Export] private float shotCooldown = .1f;
 
+    [ExportGroup("Effects")]
     [Export] private PackedScene dashSparkEffectScene;
     [Export] private PackedScene dashSmokeEffectScene;
 
     [ExportGroup("Shots Scenes")]
-    [Export] private PackedScene[] shotScenes;
+    [Export] protected PackedScene[] shotScenes;
 
     [ExportGroup("Markers")]
     [Export] private Marker2D dashSparkEffectMarker;
@@ -54,17 +56,19 @@ public partial class BasePlayer : CharacterBody2D
     private GravityComponent gravityComponent;
     private VelocityComponent velocityComponent;
     private DashComponent dashComponent;
-    private ShotComponent shotComponent;
+    protected ShotComponent shotComponent;
 
     private Timer dashCooldownTimer;
     private Timer coyoteDurationTimer;
     private Timer aimingDelayTimer;
+    private Timer shotCooldownTimer;
 
     private PlayerState currentState = PlayerState.Idle;
 
     private float dashingDirection = 0;
-    private int currentChargeLevel = 0;
+    protected int currentChargeLevel = 0;
 
+    private bool canShot = true;
     private bool canDash = true;
     private bool canSpawnSmoke = true;
     private bool isAiming = false;
@@ -109,9 +113,19 @@ public partial class BasePlayer : CharacterBody2D
         };
         AddChild(coyoteDurationTimer);
 
-        aimingDelayTimer.Timeout += () => { isAiming = false; };
+        shotCooldownTimer = new()
+        {
+            Name = "ShotCooldownTimer",
+            WaitTime = shotCooldown,
+            OneShot = true,
+            Autostart = false
+        };
+        AddChild(shotCooldownTimer);
+
         coyoteDurationTimer.Timeout += () => { gravityComponent.ApplyGravity = true; };
+        aimingDelayTimer.Timeout += () => { isAiming = false; };
         dashCooldownTimer.Timeout += () => { canDash = true; };
+        shotCooldownTimer.Timeout += () => { canShot = true; };
 
         shotComponent.ChargeChanged += level => { OnChargeChanged(level); };
         shotComponent.ChargeFinished += () => { OnChargeFinish(); };
@@ -222,10 +236,13 @@ public partial class BasePlayer : CharacterBody2D
         isAiming = true;
         aimingDelayTimer.Start();
 
+        if (!canShot) return;
+        
+        canShot = false;
+        shotCooldownTimer.Start();        
+
         busterShotMarker.UpdatePosition(currentState, (int)dir);
-
         shotComponent.Shoot(dir, shotScenes[currentChargeLevel], busterShotMarker.GlobalPosition, animatedSprite2D.FlipH);
-
         currentChargeLevel = 0;
     }
 
