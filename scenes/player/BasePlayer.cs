@@ -13,11 +13,8 @@ namespace Game.Player;
 public partial class BasePlayer : CharacterBody2D
 {
     private const float DASH_SPEED_BOOST = 1.60f;
-
     private const float DASH_SMOKE_SPAWN_DELAY = .06f;
-
     private const float DASH_COOLDOWN = .35f;
-    private const float COYOTE_DURATION = .1f;
 
     [ExportGroup("Dependencies")]
     [Export] protected AnimationPlayer animationPlayer;
@@ -50,7 +47,6 @@ public partial class BasePlayer : CharacterBody2D
     private DashComponent dashComponent;
 
     private Timer dashCooldownTimer;
-    private Timer coyoteDurationTimer;
 
     protected PlayerState currentState = PlayerState.Idle;
 
@@ -62,7 +58,6 @@ public partial class BasePlayer : CharacterBody2D
 
     public override void _Ready()
     {
-        gravityComponent = GetNode<GravityComponent>(nameof(GravityComponent));
         velocityComponent = GetNode<VelocityComponent>(nameof(VelocityComponent));
         dashComponent = GetNode<DashComponent>(nameof(DashComponent));
 
@@ -78,16 +73,6 @@ public partial class BasePlayer : CharacterBody2D
         };
         AddChild(dashCooldownTimer);
 
-        coyoteDurationTimer = new()
-        {
-            Name = "CoyoteDurationTimer",
-            WaitTime = COYOTE_DURATION,
-            OneShot = true,
-            Autostart = false
-        };
-        AddChild(coyoteDurationTimer);
-
-        coyoteDurationTimer.Timeout += () => { gravityComponent.ApplyGravity = true; };
         dashCooldownTimer.Timeout += () => { canDash = true; };        
 
         dashComponent.DashFinish += OnDashFinish;
@@ -131,22 +116,11 @@ public partial class BasePlayer : CharacterBody2D
                 velocityComponent.ResetSpeed();
             }
 
-            if (coyoteDurationTimer.IsStopped() && !IsOnFloor())
-            {
-                coyoteDurationTimer.Start();
-            }
-
-            if (Input.IsActionJustPressed(actionJump))
-            {
-                gravityComponent.Jump();
-            }
-
             if (Input.IsActionJustPressed(actionDash) && currentState != PlayerState.Dash && canDash)
             {
                 dashComponent.StartDash(DASH_SPEED_BOOST, FacingDirection, dashDuration);
             }
         }
-
 
         if (Velocity.X != 0)
         {

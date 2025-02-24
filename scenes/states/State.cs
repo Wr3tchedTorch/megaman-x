@@ -1,12 +1,13 @@
 using Godot;
-using System;
 
 namespace Game.States;
 
 public abstract partial class State : Node
 {	
-	public abstract void Enter();
-	public abstract void Exit();
-	public abstract void Update(float delta);
-	public abstract void PhysicsUpdate(float delta);
+	public CharacterBody2D owner;
+
+	public virtual void Enter() {}
+	public virtual void Exit()  {}
+	public virtual void Update(float delta) {}
+	public virtual void PhysicsUpdate(float delta) {}
 }

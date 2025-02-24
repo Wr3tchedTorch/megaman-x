@@ -6,17 +6,16 @@ namespace Game.States;
 
 public partial class StateMachine : Node
 {
-    private Dictionary<string, State> states;
-
+    private readonly Dictionary<string, State> states;
     private State currentState;
 
     public override void _Ready() 
-    {
+    {        
         foreach (var item in GetChildren())
         {
             if (item is State state) 
             {
-                states.Add(state.Name, state);
+                states.Add(state.Name, state);                
                 RemoveChild(item);
             }
         }
@@ -44,7 +43,6 @@ public partial class StateMachine : Node
     
         currentState.Exit();
         RemoveChild(currentState);
-        
         currentState = states[stateName];
         currentState.Enter();
     }    
