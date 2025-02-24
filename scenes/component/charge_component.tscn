@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://t7u58pdgxmjo"]
+
+[ext_resource type="Script" path="res://scenes/component/ChargeComponent.cs" id="1_54ttk"]
+
+[node name="ChargeComponent" type="Node"]
+script = ExtResource("1_54ttk")

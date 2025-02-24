@@ -1,4 +1,4 @@
-[gd_scene load_steps=78 format=3 uid="uid://dia04oqfawmtx"]
+[gd_scene load_steps=80 format=3 uid="uid://dia04oqfawmtx"]
 
 [ext_resource type="PackedScene" uid="uid://cvo1qtjxx8vyo" path="res://scenes/player/base_player.tscn" id="1_lheqr"]
 [ext_resource type="Texture2D" uid="uid://6ta6a0ga15nc" path="res://assets/x_sheet.png" id="2_2krr3"]
@@ -10,6 +10,8 @@
 [ext_resource type="Texture2D" uid="uid://d2ryjjweivwpm" path="res://assets/level_two_charge_particle.png" id="5_81w8o"]
 [ext_resource type="Script" path="res://scenes/player/BusterShotMarker.cs" id="6_krknh"]
 [ext_resource type="AnimationLibrary" uid="uid://caj0c7jc8dv7b" path="res://scenes/player/player_x_charge.tres" id="6_q6kiu"]
+[ext_resource type="PackedScene" uid="uid://cfsidfe43qpks" path="res://scenes/component/shot_component.tscn" id="7_1vn8j"]
+[ext_resource type="PackedScene" uid="uid://t7u58pdgxmjo" path="res://scenes/component/charge_component.tscn" id="7_b23ns"]
 [ext_resource type="Resource" uid="uid://dhwh3e4mp8uhp" path="res://resources/XBusterMarkerOffsets.tres" id="8_f2l1n"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v17mc"]
@@ -559,28 +561,38 @@ libraries = {
 }
 speed_scale = 2.0
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." index="6"]
+[node name="ShotComponent" parent="." index="1" instance=ExtResource("7_1vn8j")]
+
+[node name="ChargeComponent" parent="." index="2" node_paths=PackedStringArray("chargeTimer") instance=ExtResource("7_b23ns")]
+chargeTimer = NodePath("ChargeTimer")
+chargeBreakpoints = PackedFloat32Array(1, 3)
+
+[node name="ChargeTimer" type="Timer" parent="ChargeComponent" index="0"]
+wait_time = 3.0
+one_shot = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." index="7"]
 position = Vector2(0, -25)
 sprite_frames = SubResource("SpriteFrames_0ohyg")
 animation = &"run"
 frame = 5
 frame_progress = 0.20609
 
-[node name="ChargeParticles" type="AnimatedSprite2D" parent="." index="7"]
+[node name="ChargeParticles" type="AnimatedSprite2D" parent="." index="8"]
 sprite_frames = SubResource("SpriteFrames_2o0hx")
 offset = Vector2(0, -19)
 
-[node name="DashSparkEffectMarker" type="Marker2D" parent="." index="8"]
+[node name="DashSparkEffectMarker" type="Marker2D" parent="." index="9"]
 position = Vector2(-25, 0)
 
-[node name="DashSmokeEffectMarker" type="Marker2D" parent="." index="9"]
+[node name="DashSmokeEffectMarker" type="Marker2D" parent="." index="10"]
 position = Vector2(-11, 0)
 
-[node name="BusterShotMarker" type="Marker2D" parent="." index="10"]
+[node name="BusterShotMarker" type="Marker2D" parent="." index="11"]
 position = Vector2(13, -30)
 script = ExtResource("6_krknh")
 busterMarkerResource = ExtResource("8_f2l1n")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="11"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="12"]
 position = Vector2(-0.5, -18.5)
 shape = SubResource("CapsuleShape2D_3ym73")

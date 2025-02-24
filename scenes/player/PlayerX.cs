@@ -21,7 +21,8 @@ public partial class PlayerX : BasePlayer
 
     [Export] private BusterShotMarker busterShotMarker;
 
-    private ShotComponent shotComponent;
+    private ShotComponent   shotComponent;
+    private ChargeComponent chargeComponent;
 
     private Timer aimingDelayTimer;
     private Timer shotCooldownTimer;
@@ -35,7 +36,8 @@ public partial class PlayerX : BasePlayer
     {
         base._Ready();
 
-        shotComponent = GetNode<ShotComponent>(nameof(ShotComponent));
+        shotComponent   = GetNode<ShotComponent>(nameof(ShotComponent)); 
+        chargeComponent = GetNode<ChargeComponent>(nameof(ChargeComponent)); 
         chargeParticlesAnimatedSprite2D = GetNode<AnimatedSprite2D>("ChargeParticles");
 
         aimingDelayTimer = new()
@@ -59,8 +61,8 @@ public partial class PlayerX : BasePlayer
         aimingDelayTimer.Timeout += () => { isAiming = false; };
         shotCooldownTimer.Timeout += () => { canShot = true; };
 
-        shotComponent.ChargeChanged += level => { OnChargeChanged(level); };
-        shotComponent.ChargeFinished += () => { OnChargeFinish(); };
+        chargeComponent.ChargeChanged += level => { OnChargeChanged(level); };
+        chargeComponent.ChargeFinished += () => { OnChargeFinish(); };
     }
 
     public override void _Process(double delta)
@@ -69,11 +71,11 @@ public partial class PlayerX : BasePlayer
 
         if (Input.IsActionPressed(actionAttack))
         {
-            shotComponent.StartBusterCharge();
+            chargeComponent.StartBusterCharge();
         }
         else
         {
-            shotComponent.FinishBusterCharge();
+            chargeComponent.FinishBusterCharge();
 
             if (currentChargeLevel > 0)
             {
@@ -84,6 +86,7 @@ public partial class PlayerX : BasePlayer
         if (Input.IsActionJustPressed(actionAttack))
         {
             aimingDelayTimer.Stop();
+            chargeComponent.FinishBusterCharge();
             Shoot(FacingDirection);
         }
 

@@ -899,9 +899,6 @@ libraries = {
 }
 speed_scale = 2.0
 
-[node name="ShotComponent" parent="." index="1"]
-chargeBreakpoints = PackedFloat32Array(1.5)
-
 [node name="Timer" parent="GravityComponent" index="0"]
 wait_time = 33.009
 
@@ -909,7 +906,7 @@ wait_time = 33.009
 position = Vector2(3, -22)
 sprite_frames = SubResource("SpriteFrames_yvbp6")
 animation = &"idle"
-frame_progress = 0.275268
+frame_progress = 0.802013
 
 [node name="ChargeParticles" type="AnimatedSprite2D" parent="." index="7"]
 sprite_frames = SubResource("SpriteFrames_du08l")
