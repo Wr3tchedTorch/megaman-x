@@ -19,7 +19,6 @@ radius = 8.0
 height = 26.0
 
 [node name="XLevelOneShot" node_paths=PackedStringArray("animatedSprite2D") instance=ExtResource("1_c3wau")]
-scale = Vector2(-1, 1)
 animatedSprite2D = NodePath("AnimatedSprite2D")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." index="2"]

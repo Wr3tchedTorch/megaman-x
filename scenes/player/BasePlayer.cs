@@ -248,14 +248,14 @@ public partial class BasePlayer : CharacterBody2D
 
     private void UpdateState()
     {
-        if (gravityComponent.IsJumping)
-        {
-            currentState = PlayerState.Jump;
-            return;
-        }
         if (gravityComponent.IsFalling)
         {
             currentState = PlayerState.Fall;
+            return;
+        }
+        if (gravityComponent.IsJumping)
+        {
+            currentState = PlayerState.Jump;
             return;
         }
 
