@@ -3,7 +3,6 @@
 [ext_resource type="PackedScene" uid="uid://cvo1qtjxx8vyo" path="res://scenes/player/base_player.tscn" id="1_lheqr"]
 [ext_resource type="Texture2D" uid="uid://6ta6a0ga15nc" path="res://assets/x_sheet.png" id="2_2krr3"]
 [ext_resource type="Script" path="res://scenes/player/PlayerX.cs" id="2_oo31a"]
-[ext_resource type="Texture2D" uid="uid://dvn7j078wvdf" path="res://assets/run.png" id="3_fxgn2"]
 [ext_resource type="PackedScene" uid="uid://cnvb2nrib0unw" path="res://scenes/bullet/x_buster_shot.tscn" id="3_wj0va"]
 [ext_resource type="Texture2D" uid="uid://dpsajgjj7mu8g" path="res://assets/level_one_charge_particle.png" id="4_3jq3p"]
 [ext_resource type="PackedScene" uid="uid://rrelimouyhp0" path="res://scenes/bullet/x_level_one_shot.tscn" id="4_lor8t"]
@@ -57,41 +56,45 @@ region = Rect2(96, 49, 48, 49)
 atlas = ExtResource("2_2krr3")
 region = Rect2(0, 294, 48, 49)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_10p78"]
-atlas = ExtResource("3_fxgn2")
-region = Rect2(48, 0, 48, 49)
+[sub_resource type="AtlasTexture" id="AtlasTexture_8mkjj"]
+atlas = ExtResource("2_2krr3")
+region = Rect2(0, 147, 48, 49)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_s4xy2"]
-atlas = ExtResource("3_fxgn2")
-region = Rect2(96, 0, 48, 49)
+[sub_resource type="AtlasTexture" id="AtlasTexture_ihodd"]
+atlas = ExtResource("2_2krr3")
+region = Rect2(48, 147, 48, 49)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_00758"]
-atlas = ExtResource("3_fxgn2")
-region = Rect2(144, 0, 48, 49)
+[sub_resource type="AtlasTexture" id="AtlasTexture_1pvxk"]
+atlas = ExtResource("2_2krr3")
+region = Rect2(96, 147, 48, 49)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_yaqof"]
-atlas = ExtResource("3_fxgn2")
-region = Rect2(192, 0, 48, 49)
+[sub_resource type="AtlasTexture" id="AtlasTexture_fs55u"]
+atlas = ExtResource("2_2krr3")
+region = Rect2(144, 147, 48, 49)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_0ebct"]
-atlas = ExtResource("3_fxgn2")
-region = Rect2(240, 0, 48, 49)
+[sub_resource type="AtlasTexture" id="AtlasTexture_dd1gr"]
+atlas = ExtResource("2_2krr3")
+region = Rect2(192, 147, 48, 49)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_n8877"]
-atlas = ExtResource("3_fxgn2")
-region = Rect2(288, 0, 48, 49)
+[sub_resource type="AtlasTexture" id="AtlasTexture_7ruly"]
+atlas = ExtResource("2_2krr3")
+region = Rect2(240, 147, 48, 49)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_yby0p"]
-atlas = ExtResource("3_fxgn2")
-region = Rect2(336, 0, 48, 49)
+[sub_resource type="AtlasTexture" id="AtlasTexture_bij7e"]
+atlas = ExtResource("2_2krr3")
+region = Rect2(288, 147, 48, 49)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ais4s"]
-atlas = ExtResource("3_fxgn2")
-region = Rect2(384, 0, 48, 49)
+[sub_resource type="AtlasTexture" id="AtlasTexture_uary6"]
+atlas = ExtResource("2_2krr3")
+region = Rect2(336, 147, 48, 49)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_iwj5q"]
-atlas = ExtResource("3_fxgn2")
-region = Rect2(432, 0, 48, 49)
+[sub_resource type="AtlasTexture" id="AtlasTexture_2hklu"]
+atlas = ExtResource("2_2krr3")
+region = Rect2(384, 147, 48, 49)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gecay"]
+atlas = ExtResource("2_2krr3")
+region = Rect2(432, 147, 48, 49)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_m8wok"]
 atlas = ExtResource("2_2krr3")
@@ -235,31 +238,34 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_10p78")
+"texture": SubResource("AtlasTexture_8mkjj")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_s4xy2")
+"texture": SubResource("AtlasTexture_ihodd")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_00758")
+"texture": SubResource("AtlasTexture_1pvxk")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_yaqof")
+"texture": SubResource("AtlasTexture_fs55u")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_0ebct")
+"texture": SubResource("AtlasTexture_dd1gr")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_n8877")
+"texture": SubResource("AtlasTexture_7ruly")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_yby0p")
+"texture": SubResource("AtlasTexture_bij7e")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ais4s")
+"texture": SubResource("AtlasTexture_uary6")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_iwj5q")
+"texture": SubResource("AtlasTexture_2hklu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gecay")
 }],
 "loop": true,
 "name": &"run",
@@ -535,16 +541,17 @@ animations = [{
 radius = 8.5
 height = 33.0
 
-[node name="PlayerX" node_paths=PackedStringArray("animationPlayer", "animatedSprite2D", "chargeParticlesAnimated", "dashSparkEffectMarker", "dashSmokeEffectMarker", "busterShotMarker") instance=ExtResource("1_lheqr")]
+[node name="PlayerX" node_paths=PackedStringArray("chargeParticlesAnimatedSprite2D", "busterShotMarker", "animationPlayer", "animatedSprite2D", "dashSparkEffectMarker", "dashSmokeEffectMarker") instance=ExtResource("1_lheqr")]
 script = ExtResource("2_oo31a")
-animationPlayer = NodePath("AnimationPlayer")
-animatedSprite2D = NodePath("AnimatedSprite2D")
-chargeParticlesAnimated = NodePath("ChargeParticles")
+animationCharge = &"charge"
+chargeParticlesAnimatedSprite2D = NodePath("ChargeParticles")
 shotCooldown = 0.05
 shotScenes = Array[PackedScene]([ExtResource("3_wj0va"), ExtResource("4_lor8t"), ExtResource("5_75ulu")])
+busterShotMarker = NodePath("BusterShotMarker")
+animationPlayer = NodePath("AnimationPlayer")
+animatedSprite2D = NodePath("AnimatedSprite2D")
 dashSparkEffectMarker = NodePath("DashSparkEffectMarker")
 dashSmokeEffectMarker = NodePath("DashSmokeEffectMarker")
-busterShotMarker = NodePath("BusterShotMarker")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." index="0"]
 libraries = {
@@ -555,9 +562,9 @@ speed_scale = 2.0
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." index="6"]
 position = Vector2(0, -25)
 sprite_frames = SubResource("SpriteFrames_0ohyg")
-animation = &"dash"
-frame = 1
-frame_progress = 1.0
+animation = &"run"
+frame = 5
+frame_progress = 0.20609
 
 [node name="ChargeParticles" type="AnimatedSprite2D" parent="." index="7"]
 sprite_frames = SubResource("SpriteFrames_2o0hx")

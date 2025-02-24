@@ -5,16 +5,20 @@ namespace Game.Player;
 public partial class PlayerZero : BasePlayer
 {
 
-    protected override void Shoot(float dir)
+    public override void _Process(double delta)
     {
-        if (currentChargeLevel == shotScenes.Length-1) 
-        {
-            GD.Print("Using Lightsaber!");
-            shotComponent.FinishBusterCharge();
-            currentChargeLevel = 0;
-            return;
-        }
+        base._Process(delta);
 
-        base.Shoot(dir);
+        if (currentState == PlayerState.None) return;
+        
+        string animationName = "";
+
+        animationName += currentState.ToString().ToLower();
+        animatedSprite2D.Animation = animationName;
     }
+
+    private void Shoot(float dir)
+    {        
+    }
+
 }

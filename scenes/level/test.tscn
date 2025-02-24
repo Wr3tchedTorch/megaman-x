@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=4 uid="uid://bldrt5xp3bnx3"]
+[gd_scene load_steps=8 format=4 uid="uid://bldrt5xp3bnx3"]
 
 [ext_resource type="Script" path="res://scenes/level/Test.cs" id="1_0ttev"]
 [ext_resource type="Texture2D" uid="uid://cf8jhnx13vrox" path="res://assets/bg_grid.png" id="2_45d43"]
 [ext_resource type="PackedScene" uid="uid://ypauhrhtjef8" path="res://scenes/player/player_zero.tscn" id="3_ha0o8"]
 [ext_resource type="Texture2D" uid="uid://by76t5adhntkd" path="res://assets/spr_tiles_test.png" id="3_mafb5"]
+[ext_resource type="PackedScene" uid="uid://dia04oqfawmtx" path="res://scenes/player/player_x.tscn" id="5_ca6a4"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kotqa"]
 texture = ExtResource("3_mafb5")
@@ -430,6 +431,10 @@ position = Vector2(345, 122)
 [node name="Camera2D" type="Camera2D" parent="PlayerZero"]
 position = Vector2(0, -50)
 zoom = Vector2(3, 3)
+
+[node name="PlayerX" parent="." instance=ExtResource("5_ca6a4")]
+position = Vector2(421, 131)
+animationCharge = &"charge"
 
 [node name="Shots" type="Node" parent="." groups=["shots"]]
 
