@@ -5,7 +5,6 @@ namespace Game.Player;
 
 public partial class PlayerX : BasePlayer
 {
-    private const float AIMING_ANIMATION_DELAY = .35f;
 
     [ExportGroup("Input")]
     [Export] private StringName animationCharge = "charge";
@@ -24,10 +23,7 @@ public partial class PlayerX : BasePlayer
     private ShotComponent   shotComponent;
     private ChargeComponent chargeComponent;
 
-    private Timer aimingDelayTimer;
-    private Timer shotCooldownTimer;
-
-    protected int currentChargeLevel = 0;
+    protected int currentChargeLevel = 0;    
 
     private bool isAiming = false;
     private bool canShot = true;
@@ -40,29 +36,11 @@ public partial class PlayerX : BasePlayer
         chargeComponent = GetNode<ChargeComponent>(nameof(ChargeComponent)); 
         chargeParticlesAnimatedSprite2D = GetNode<AnimatedSprite2D>("ChargeParticles");
 
-        aimingDelayTimer = new()
-        {
-            Name = "AimingDelayTimer",
-            WaitTime = AIMING_ANIMATION_DELAY,
-            OneShot = true,
-            Autostart = false
-        };
-        AddChild(aimingDelayTimer);
+        chargeComponent.ChargeChanged  += level => { OnChargeChanged(level); };
+        chargeComponent.ChargeFinished += ()    => { OnChargeFinish(); };
 
-        shotCooldownTimer = new()
-        {
-            Name = "ShotCooldownTimer",
-            WaitTime = shotCooldown,
-            OneShot = true,
-            Autostart = false
-        };
-        AddChild(shotCooldownTimer);
-
-        aimingDelayTimer.Timeout += () => { isAiming = false; };
-        shotCooldownTimer.Timeout += () => { canShot = true; };
-
-        chargeComponent.ChargeChanged += level => { OnChargeChanged(level); };
-        chargeComponent.ChargeFinished += () => { OnChargeFinish(); };
+        shotComponent.ShotCooldownFinish   += () => { canShot = true; };
+        shotComponent.AimingDurationFinish += () => { isAiming = false; };
     }
 
     public override void _Process(double delta)
@@ -85,7 +63,6 @@ public partial class PlayerX : BasePlayer
 
         if (Input.IsActionJustPressed(actionAttack))
         {
-            aimingDelayTimer.Stop();
             chargeComponent.FinishBusterCharge();
             Shoot(FacingDirection);
         }
@@ -104,12 +81,10 @@ public partial class PlayerX : BasePlayer
     private void Shoot(float dir)
     {
         isAiming = true;
-        aimingDelayTimer.Start();
 
         if (!canShot) return;
 
         canShot = false;
-        shotCooldownTimer.Start();
 
         busterShotMarker.UpdatePosition(currentState, (int)dir);
         shotComponent.Shoot(dir, shotScenes[currentChargeLevel], busterShotMarker.GlobalPosition, animatedSprite2D.FlipH);

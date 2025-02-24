@@ -104,7 +104,6 @@ public partial class BasePlayer : CharacterBody2D
 
     public override void _PhysicsProcess(double delta)
     {
-        string animationName = "";
         var toVelocity = Velocity;
 
         var isStanding = !gravityComponent.ApplyGravity;
