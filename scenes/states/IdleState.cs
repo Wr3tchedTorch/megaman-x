@@ -3,7 +3,7 @@ using Godot;
 
 namespace Game.States;
 
-public partial class RunningState : State
+public partial class IdleState : State
 {	
 	[ExportGroup("Dependencies")]
 	[Export] private VelocityComponent velocityComponent;
@@ -14,14 +14,15 @@ public partial class RunningState : State
 
     public override void Enter()
     {
-		owner = GetOwner<CharacterBody2D>();
     }
     
 	public override void PhysicsUpdate(float delta)
     {
-        var dir = Input.GetAxis(actionLeft, actionRight);
+		if (!IsInstanceValid(owner)) return;
+
+        var xDirection = Input.GetAxis(actionLeft, actionRight);
 		var velocity = owner.Velocity;
-		velocity.X = velocityComponent.MoveX(dir);
+		velocity.X = velocityComponent.MoveX(xDirection);
 
 		owner.Velocity = velocity;
     }

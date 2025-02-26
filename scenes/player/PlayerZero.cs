@@ -9,16 +9,6 @@ public partial class PlayerZero : BasePlayer
     {
         base._Process(delta);
 
-        if (currentState == PlayerState.None) return;
-        
-        string animationName = "";
-
-        animationName += currentState.ToString().ToLower();
-        animatedSprite2D.Animation = animationName;
+        AnimateState();
     }
-
-    private void Shoot(float dir)
-    {        
-    }
-
 }

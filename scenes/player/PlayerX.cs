@@ -20,10 +20,10 @@ public partial class PlayerX : BasePlayer
 
     [Export] private BusterShotMarker busterShotMarker;
 
-    private ShotComponent   shotComponent;
+    private ShotComponent shotComponent;
     private ChargeComponent chargeComponent;
 
-    protected int currentChargeLevel = 0;    
+    protected int currentChargeLevel = 0;
 
     private bool isAiming = false;
     private bool canShot = true;
@@ -32,14 +32,14 @@ public partial class PlayerX : BasePlayer
     {
         base._Ready();
 
-        shotComponent   = GetNode<ShotComponent>(nameof(ShotComponent)); 
-        chargeComponent = GetNode<ChargeComponent>(nameof(ChargeComponent)); 
+        shotComponent = GetNode<ShotComponent>(nameof(ShotComponent));
+        chargeComponent = GetNode<ChargeComponent>(nameof(ChargeComponent));
         chargeParticlesAnimatedSprite2D = GetNode<AnimatedSprite2D>("ChargeParticles");
 
-        chargeComponent.ChargeChanged  += level => { OnChargeChanged(level); };
-        chargeComponent.ChargeFinished += ()    => { OnChargeFinish(); };
+        chargeComponent.ChargeChanged += level => { OnChargeChanged(level); };
+        chargeComponent.ChargeFinished += () => { OnChargeFinish(); };
 
-        shotComponent.ShotCooldownFinish   += () => { canShot = true; };
+        shotComponent.ShotCooldownFinish += () => { canShot = true; };
         shotComponent.AimingDurationFinish += () => { isAiming = false; };
     }
 
@@ -51,31 +51,47 @@ public partial class PlayerX : BasePlayer
         {
             chargeComponent.StartBusterCharge();
         }
-        else
+        else 
         {
-            chargeComponent.FinishBusterCharge();
-
-            if (currentChargeLevel > 0)
-            {
-                Shoot(FacingDirection);
-            }
+            FinishBusterCharge();
         }
 
         if (Input.IsActionJustPressed(actionAttack))
         {
-            chargeComponent.FinishBusterCharge();
-            Shoot(FacingDirection);
+            Attack();
         }
+    }
 
+    protected override void AnimateState()
+    {
         if (currentState == PlayerState.None) return;
 
         string animationName = "";
+
         if (isAiming)
         {
             animationName = $"{PlayerState.Shoot.ToString().ToLower()}_";
         }
+        
         animationName += currentState.ToString().ToLower();
         animatedSprite2D.Animation = animationName;
+    }
+
+
+    protected override void Attack()
+    {
+        chargeComponent.FinishBusterCharge();
+        Shoot(FacingDirection);
+    }
+
+    private void FinishBusterCharge()
+    {
+        chargeComponent.FinishBusterCharge();
+
+        if (currentChargeLevel > 0)
+        {
+            Shoot(FacingDirection);
+        }
     }
 
     private void Shoot(float dir)

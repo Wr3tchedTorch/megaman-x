@@ -1,10 +1,13 @@
-[gd_scene load_steps=122 format=3 uid="uid://ypauhrhtjef8"]
+[gd_scene load_steps=125 format=3 uid="uid://ypauhrhtjef8"]
 
 [ext_resource type="PackedScene" uid="uid://cvo1qtjxx8vyo" path="res://scenes/player/base_player.tscn" id="1_5dupq"]
 [ext_resource type="Script" path="res://scenes/player/PlayerZero.cs" id="2_k2ucl"]
+[ext_resource type="PackedScene" uid="uid://5jo48rspa603" path="res://scenes/states/state_machine.tscn" id="3_lp752"]
 [ext_resource type="Texture2D" uid="uid://dpsajgjj7mu8g" path="res://assets/level_one_charge_particle.png" id="4_hnua3"]
+[ext_resource type="PackedScene" uid="uid://cgcpsjswy2den" path="res://scenes/states/idle_state.tscn" id="4_mnlmp"]
 [ext_resource type="Texture2D" uid="uid://da5ygh0s3lnyn" path="res://assets/zero_sheet.png" id="4_va5rs"]
 [ext_resource type="Texture2D" uid="uid://d2ryjjweivwpm" path="res://assets/level_two_charge_particle.png" id="5_3fi7g"]
+[ext_resource type="PackedScene" uid="uid://comvfniow51b5" path="res://scenes/states/jump_state.tscn" id="5_i07g5"]
 [ext_resource type="Script" path="res://scenes/player/BusterShotMarker.cs" id="6_2q58x"]
 [ext_resource type="Resource" uid="uid://dhwh3e4mp8uhp" path="res://resources/XBusterMarkerOffsets.tres" id="7_idlj1"]
 
@@ -898,6 +901,19 @@ libraries = {
 "": SubResource("AnimationLibrary_ep68r")
 }
 speed_scale = 2.0
+
+[node name="StateMachine" parent="." index="1" instance=ExtResource("3_lp752")]
+
+[node name="Idle" parent="StateMachine" index="0" node_paths=PackedStringArray("velocityComponent") instance=ExtResource("4_mnlmp")]
+velocityComponent = NodePath("../../VelocityComponent")
+actionLeft = &"left"
+actionRight = &"right"
+
+[node name="Jump" parent="StateMachine" index="1" node_paths=PackedStringArray("gravityComponent", "coyoteDurationTimer") instance=ExtResource("5_i07g5")]
+gravityComponent = NodePath("../../GravityComponent")
+coyoteDurationTimer = NodePath("Timer")
+
+[node name="Timer" type="Timer" parent="StateMachine/Jump" index="0"]
 
 [node name="Timer" parent="GravityComponent" index="0"]
 wait_time = 33.009

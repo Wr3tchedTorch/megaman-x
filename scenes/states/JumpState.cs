@@ -5,7 +5,6 @@ namespace Game.States;
 
 public partial class JumpState : State
 {
-	[Signal] public delegate void FallingEventHandler();
 	[Signal] public delegate void LandingEventHandler();
 
 	[ExportGroup("Dependencies")]
@@ -19,24 +18,26 @@ public partial class JumpState : State
 
 	public override void Enter()
 	{
-		coyoteDurationTimer.Timeout += () => { gravityComponent.ApplyGravity = true; };	
-		gravityComponent.OnLanding  += () => { EmitSignal(SignalName.Landing); };
+		coyoteDurationTimer.WaitTime = coyoteDuration;
+
+		coyoteDurationTimer.Timeout += OnCoyoteTimeout;
+		gravityComponent.Landing += OnLanding;
 	}
 
 	public override void Update(float delta)
 	{
 		if (!IsParentStanding) return;
 
-		if (coyoteDurationTimer.IsStopped() && !owner.IsOnFloor())
-		{
-			coyoteDurationTimer.Start();
-		}
+		gravityComponent.Jump();		
 	}
 
-	public void Jump()
+	private void OnCoyoteTimeout()
 	{
-		if (!IsParentStanding) return;
+		gravityComponent.ApplyGravity = true;
+	}
 
-		gravityComponent.Jump();
+	private void OnLanding()
+	{
+		EmitSignal(SignalName.Landing);
 	}
 }
