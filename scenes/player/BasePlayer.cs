@@ -4,7 +4,6 @@
 // TODO: (maybe) make velocity on the x axis affect gravity
 
 using Game.Component;
-using Game.States;
 using Godot;
 
 namespace Game.Player;
@@ -29,6 +28,9 @@ public partial class BasePlayer : CharacterBody2D
     [Export] private StringName actionDash = "dash";
     [Export] protected StringName actionAttack = "shoot";
 
+    [ExportGroup("Attributes")]
+    [Export] private float dashSpeedBoost = 2.0f;
+
     [ExportGroup("Effects")]
     [Export] private PackedScene dashSparkEffectScene;
     [Export] private PackedScene dashSmokeEffectScene;
@@ -37,8 +39,6 @@ public partial class BasePlayer : CharacterBody2D
     [Export] private Marker2D dashSparkEffectMarker;
     [Export] private Marker2D dashSmokeEffectMarker;
 
-    private StateMachine stateMachine;
-
     private GravityComponent gravityComponent;
     private VelocityComponent velocityComponent;
     private DashComponent dashComponent;
@@ -46,6 +46,7 @@ public partial class BasePlayer : CharacterBody2D
     protected PlayerState currentState = PlayerState.Idle;
 
     private bool canSpawnSmoke = true;
+    private bool canDash = true;
 
     protected int FacingDirection => animatedSprite2D.FlipH ? -1 : 1;
 
@@ -53,7 +54,7 @@ public partial class BasePlayer : CharacterBody2D
     {
         velocityComponent = GetNode<VelocityComponent>(nameof(VelocityComponent));
         dashComponent = GetNode<DashComponent>(nameof(DashComponent));
-        stateMachine = GetNode<StateMachine>(nameof(StateMachine));
+        gravityComponent = GetNode<GravityComponent>(nameof(GravityComponent));
 
         animationPlayer = GetNode<AnimationPlayer>(nameof(AnimationPlayer));
         animatedSprite2D = GetNode<AnimatedSprite2D>(nameof(AnimatedSprite2D));
@@ -64,44 +65,92 @@ public partial class BasePlayer : CharacterBody2D
             if (currentState == PlayerState.Land) currentState = PlayerState.Idle;
         };
 
-        gravityComponent.Landing += OnLanding;
+        gravityComponent.Landing += () => { currentState = PlayerState.Land; };
+
+        dashComponent.CanDash += () => { canDash = true; };
     }
 
     public override void _PhysicsProcess(double delta)
     {
-        var toVelocity = Velocity;
-        MovementLogic(toVelocity);
+        MovementLogic();
 
         JumpLogic();
+
+        DashLogic();
 
         if (Velocity.X != 0)
         {
             animatedSprite2D.FlipH = Velocity.X < 0;
         }
 
-        Velocity = toVelocity;
         MoveAndSlide();
     }
 
     public override void _Process(double delta)
     {
-        AnimateState();
+        GD.Print($"\n{currentState}");
 
-        UpdateCurrentState();
+        if (gravityComponent.IsFalling)
+        {
+            currentState = PlayerState.Fall;
+        }
+
+        bool isIdle = gravityComponent.IsStanding && Velocity.X == 0 && currentState is not PlayerState.Land or PlayerState.Dash or PlayerState.Jump;
+
+        if (isIdle)
+        {
+            currentState = PlayerState.Idle;
+        }
+
+        AnimateState();
     }
 
-    protected virtual void MovementLogic(Vector2 toVelocity)
+    protected virtual void MovementLogic()
     {
+        if (currentState == PlayerState.Dash) return;
+
         var xDirection = Input.GetAxis(actionLeft, actionRight);
-        toVelocity = Velocity;
+
+        if (xDirection != 0 && gravityComponent.IsStanding && currentState is not PlayerState.Land or PlayerState.Jump)
+        {
+            currentState = PlayerState.Run;
+        }
+
+        var toVelocity = Velocity;
         toVelocity.X = velocityComponent.MoveX(xDirection);
+        Velocity = toVelocity;
     }
 
     protected virtual void JumpLogic()
     {
-        if (Input.IsActionPressed(actionJump))
+        if (Input.IsActionPressed(actionJump) && gravityComponent.IsStanding)
         {
+            currentState = PlayerState.Jump;
             gravityComponent.Jump();
+        }
+    }
+
+    protected virtual void DashLogic()
+    {
+        var toVelocity = Velocity;
+
+        if (dashComponent.IsDashing && (!Input.IsActionPressed(actionDash) || !gravityComponent.IsStanding))
+        {
+            if (currentState == PlayerState.Dash)
+            {
+                currentState = PlayerState.None;
+            }
+            dashComponent.FinishDash();
+            return;
+        }
+
+        if (Input.IsActionPressed(actionDash) && gravityComponent.IsStanding && canDash)
+        {
+            currentState = PlayerState.Dash;
+
+            toVelocity.X = dashComponent.GetDashVector(dashSpeedBoost, FacingDirection);
+
+            Velocity = toVelocity;
         }
     }
 
@@ -115,39 +164,6 @@ public partial class BasePlayer : CharacterBody2D
 
         animationName += currentState.ToString().ToLower();
         animatedSprite2D.Animation = animationName;
-    }
-
-    private void UpdateCurrentState()
-    {
-        if (gravityComponent.IsFalling)
-        {
-            currentState = PlayerState.Fall;
-            return;
-        }
-        if (gravityComponent.IsJumping)
-        {
-            currentState = PlayerState.Jump;
-            return;
-        }
-
-        if (!IsOnFloor() || currentState == PlayerState.Land || currentState == PlayerState.Dash)
-        {
-            return;
-        }
-
-        if (Velocity.X != 0)
-        {
-            currentState = PlayerState.Run;
-            return;
-        }
-
-        currentState = PlayerState.Idle;
-    }
-
-    private void OnLanding()
-    {
-        currentState = PlayerState.Land;
-        stateMachine.SwitchTo("Idle");
     }
 
     private async void StartSmokeDelayTimer()

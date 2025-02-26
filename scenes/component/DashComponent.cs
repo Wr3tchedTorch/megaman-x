@@ -5,31 +5,59 @@ namespace Game.Component;
 public partial class DashComponent : Node
 {
 	[Signal] public delegate void DashFinishEventHandler();
-	[Signal] public delegate void DashStartEventHandler();
+	[Signal] public delegate void CanDashEventHandler();
 
 	[Export] private VelocityComponent velocityComponent;
 
+	[Export] Timer dashDurationTimer;
+	[Export] Timer dashCooldownTimer;
+
+	public bool IsDashing => isDashStarted;
+
 	private float dashingDirection = 0;
 
-	public float Dash(float xDir, StringName actionDash)
+	private bool isDashStarted = false;
+
+	public override void _Ready()
 	{
-		if (!Input.IsActionPressed(actionDash) || (xDir != 0 && xDir != dashingDirection))
+		dashDurationTimer.Timeout += () => { FinishDash(); };
+		dashCooldownTimer.Timeout += () => { EmitSignal(SignalName.CanDash); };
+	}
+
+	public float GetDashVector(float dashSpeedBoost, int dashingDirection)
+	{
+		if (!isDashStarted)
 		{
-			EmitSignal(SignalName.DashFinish);
+			StartDash(dashSpeedBoost, dashingDirection);
+		}
+
+		if (dashingDirection != 0 && dashingDirection != this.dashingDirection)
+		{
+			FinishDash();
+			dashCooldownTimer.Start();
 			return 0.0f;
 		}
 
 		return velocityComponent.MoveX(dashingDirection);
 	}
 
-	public async void StartDash(float dashSpeedBoost, int dashingDirection, float dashDuration)
+	public void FinishDash()
 	{
-		EmitSignal(SignalName.DashStart);
+		isDashStarted = false;
+
+		velocityComponent.ResetSpeed();
+		dashingDirection = 0;
+
+		EmitSignal(SignalName.DashFinish);
+	}
+
+	private void StartDash(float dashSpeedBoost, int dashingDirection)
+	{
+		isDashStarted = true;
 
 		velocityComponent.Speed *= dashSpeedBoost;
 		this.dashingDirection = dashingDirection;
 
-		await ToSignal(GetTree().CreateTimer(dashDuration), "timeout");
-		EmitSignal(SignalName.DashFinish);
+		dashDurationTimer.Start();
 	}
 }

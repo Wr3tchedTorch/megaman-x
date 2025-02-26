@@ -7,6 +7,7 @@ public partial class VelocityComponent : Node
 	[Export] public float Speed { get; set; } = 300.0f;
 
 	private Vector2 toVelocity;
+	
 	private float initialSpeed;
 	private int dashingDirection;
 

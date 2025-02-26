@@ -17,7 +17,7 @@ dashSmokeEffectScene = ExtResource("3_oswhr")
 height = 3800.0
 duration = 51.0
 
-[node name="Timer" type="Timer" parent="GravityComponent"]
+[node name="CoyoteDurationTimer" type="Timer" parent="GravityComponent"]
 one_shot = true
 
 [node name="DashComponent" parent="." node_paths=PackedStringArray("velocityComponent") instance=ExtResource("7_fhkx8")]
@@ -25,7 +25,3 @@ velocityComponent = NodePath("../VelocityComponent")
 
 [node name="VelocityComponent" parent="." instance=ExtResource("2_nmjj5")]
 Speed = 200.0
-
-[node name="DashDurationTimer" type="Timer" parent="."]
-wait_time = 0.4
-one_shot = true
